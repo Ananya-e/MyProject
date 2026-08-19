@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/toast.css">
+</head>
+<body>
+<div class="dashboard">
+<aside class="sidebar">
+<a href="index.html" class="sidebar-logo"><img src="assets/intervia-logo.png" alt="Intervia"></a>
+<nav class="sidebar-nav">
+<a href="dashboard.html" class="sidebar-link active"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10.5V20h14v-9.5"></path><path d="M9 20v-6h6v6"></path></svg><span>Dashboard</span></a>
+<a href="practice.html" class="sidebar-link"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M8 19v2M16 19v2M8 10h.01M16 10h.01"></path></svg><span>Practice Interview</span></a>
+<a href="interviews.html" class="sidebar-link"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>My Interviews</span></a>
+<a href="#" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-6"></path></svg><span>Progress</span></a>
+<a href="#" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path><path d="m4 7 6-3 6 2 6-4"></path></svg><span>Reports & Analytics</span></a>
+<a href="resume.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"></path><path d="M15 3v5h4M9 12h6M9 16h6"></path></svg><span>Resume</span></a>
+<a href="question-bank.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Question Bank</span></a>
+<a href="mock-tests.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M4 6h16v13H4z"></path><path d="M8 6V4h8v2M8 11h8M8 15h5"></path></svg><span>Mock Tests</span></a>
+</nav>
+<div class="premium-card">
+<div class="premium-title"><svg viewBox="0 0 24 24"><path d="m12 3 2.2 4.7L19 9l-3.5 3.4.8 4.9-4.3-2.3-4.3 2.3.8-4.9L5 9l4.8-1.3L12 3Z"></path></svg><span>Go Premium</span></div>
+<p>Unlock unlimited interviews, advanced analytics and personalized insights.</p>
+<button type="button">Upgrade Now</button>
+</div>
+<a href="login.html" class="logout-link" id="logoutBtn"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M14 4h5v16h-5"></path></svg><span>Logout</span></a>
+</aside>
+<main class="main-content">
+<header class="topbar">
+<div class="search-box">
+<input type="text" id="dashboardSearch" placeholder="Search anything...">
+<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+</div>
+<div class="topbar-actions">
+<button type="button" class="profile-btn" id="profileBtn">
+<img id="profileImage" src="assets/profile-placeholder.png" alt="Profile">
+<strong id="profileName">User</strong>
+<svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"></path></svg>
+</button>
+</div>
+</header>
+<div class="content">
+<section class="welcome-banner">
+<div class="welcome-text">
+<h1>Welcome back, <span id="welcomeName">User</span>!</h1>
+<p>Ready to improve your interview performance today?</p>
+<a href="#" class="primary-btn" id="startInterviewBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>Start New Interview</a>
+</div>
+<div class="welcome-visual">
+<div class="robot-character">
+<div class="robot-antenna"></div>
+<div class="robot-head">
+<div class="robot-face">
+<span></span>
+<span></span>
+<div class="robot-mouth"></div>
+</div>
+</div>
+<div class="robot-neck"></div>
+<div class="robot-body">
+<div class="robot-tie"></div>
+<div class="robot-panel"></div>
+</div>
+<div class="robot-arm robot-arm-left">
+<div class="robot-hand"></div>
+</div>
+<div class="robot-arm robot-arm-right">
+<div class="robot-hand"></div>
+</div>
+</div>
+<div class="visual-bubble">
+<span></span>
+<span></span>
+<span></span>
+</div>
+<div class="visual-chart">
+<i></i>
+<i></i>
+<i></i>
+</div>
+</div>
+</section>
+<section class="top-cards">
+<div class="info-card resume-card">
+<div class="card-icon blue-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"></path><path d="M15 3v5h4M9 12h6M9 16h6"></path></svg></div>
+<div class="card-main">
+<h3>Your Resume</h3>
+<div class="status-check" id="resumeStatus">✓</div>
+<strong id="resumeName">No resume uploaded</strong>
+<p id="resumeDate">Upload your resume to get started</p>
+<button type="button" class="outline-btn" id="resumeBtn">View / Update</button>
+</div>
+</div>
+<div class="info-card role-card">
+<div class="card-icon cyan-icon"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="2"></rect><path d="M9 7V5h6v2M8 12h8M12 10v4"></path></svg></div>
+<div class="card-main">
+<h3>Target Role</h3>
+<div class="status-check" id="roleStatus">✓</div>
+<strong id="targetRole">Not selected</strong>
+<p>Change role or preferences</p>
+<button type="button" class="outline-btn" id="roleBtn">Update Role</button>
+</div>
+</div>
+<div class="info-card readiness-card">
+<div class="readiness-header">
+<h3>Interview Readiness</h3>
+<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 10v5M12 7h.01"></path></svg>
+</div>
+<div class="readiness-body">
+<div class="readiness-circle"><strong id="overallReadiness">0%</strong><span>Overall Readiness</span></div>
+<div class="skill-list">
+<div class="skill-row"><span class="skill-label purple">Communication</span><div class="skill-bar"><i id="communicationBar"></i></div><strong id="communicationScore">0%</strong></div>
+<div class="skill-row"><span class="skill-label blue">Confidence</span><div class="skill-bar"><i id="confidenceBar"></i></div><strong id="confidenceScore">0%</strong></div>
+<div class="skill-row"><span class="skill-label green">Technical Skills</span><div class="skill-bar"><i id="technicalBar"></i></div><strong id="technicalScore">0%</strong></div>
+<div class="skill-row"><span class="skill-label orange">Answer Structure</span><div class="skill-bar"><i id="structureBar"></i></div><strong id="structureScore">0%</strong></div>
+</div>
+</div>
+</div>
+</section>
+<section class="middle-grid">
+<div class="panel recent-panel">
+<div class="panel-heading"><h2>Recent Interview</h2><span id="recentInterviewDate">No interviews</span></div>
+<div class="recent-content">
+<div class="score-circle"><strong id="recentScore">0%</strong><span>Overall Score</span></div>
+<div class="recent-details">
+<div><span>Interview Type</span><strong id="recentType">—</strong></div>
+<div><span>Duration</span><strong id="recentDuration">—</strong></div>
+<div><span>Questions Asked</span><strong id="recentQuestions">—</strong></div>
+<div><span>Your Rating</span><strong class="stars" id="recentRating">—</strong></div>
+<a href="#" class="analysis-btn" id="analysisBtn">View Detailed Analysis <span>→</span></a>
+</div>
+</div>
+</div>
+<div class="panel progress-panel">
+<div class="panel-heading"><h2>Your Progress</h2><select id="progressRange"><option value="6">Last 6 Interviews</option><option value="10">Last 10 Interviews</option></select></div>
+<div class="chart-area">
+<div class="y-labels"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
+<div class="chart" id="progressChart"></div>
+</div>
+</div>
+</section>
+<section class="bottom-grid">
+<div class="panel focus-panel">
+<div class="panel-heading"><h2>Focus Areas to Improve</h2></div>
+<div id="focusAreas"></div>
+</div>
+<div class="panel quick-panel">
+<div class="panel-heading"><h2>Quick Actions</h2></div>
+<div class="quick-grid">
+<a href="#" class="quick-card" id="quickStart"><div class="quick-icon purple-bg"><svg viewBox="0 0 24 24"><path d="M5 7h10a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H9l-4 3v-3a3 3 0 0 1-3-3v-5a3 3 0 0 1 3-3Z"></path></svg></div><strong>Start Interview</strong><span>Practice now</span></a>
+<a href="#" class="quick-card" id="quickResume"><div class="quick-icon blue-bg"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg></div><strong>Upload Resume</strong><span>Update your resume</span></a>
+<a href="#" class="quick-card" id="quickProgress"><div class="quick-icon green-bg"><svg viewBox="0 0 24 24"><path d="M5 19V9M12 19V5M19 19v-7"></path><path d="m4 7 5-3 5 2 6-4"></path></svg></div><strong>View Progress</strong><span>Track your growth</span></a>
+<a href="#" class="quick-card" id="quickPrevious"><div class="quick-icon orange-bg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg></div><strong>Previous Interviews</strong><span>Review past sessions</span></a>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script src="js/config.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
