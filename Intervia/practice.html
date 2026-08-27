@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | Practice Interview</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/practice.css">
+<link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+<div class="side-menu-header">
+<img src="assets/intervia-logo.png" alt="Intervia" class="side-menu-logo">
+<button class="side-menu-close" id="menuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+</div>
+
+<nav class="side-menu-nav">
+<a href="dashboard.html"><i class="fa-regular fa-house"></i><span>Dashboard</span></a>
+<a href="practice.html"><i class="fa-regular fa-message"></i><span>Practice Interview</span></a>
+<a href="interviews.html"><i class="fa-regular fa-rectangle-list"></i><span>My Interviews</span></a>
+<a href="progress.html"><i class="fa-regular fa-chart-line"></i><span>Progress</span></a>
+<a href="reports.html"><i class="fa-regular fa-chart-bar"></i><span>Reports &amp; Analytics</span></a>
+<a href="resume.html"><i class="fa-regular fa-file-lines"></i><span>Resume</span></a>
+</nav>
+
+<button class="side-menu-logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+</aside>
+
+<div class="logout-overlay" id="logoutOverlay">
+<div class="logout-box">
+<div class="logout-icon"><i class="fa-solid fa-exclamation"></i></div>
+<h2>Are you sure?</h2>
+<p>Do you really want to logout from Intervia?</p>
+<div class="logout-actions">
+<button class="logout-cancel" id="cancelLogout">Cancel</button>
+<button class="logout-confirm" id="confirmLogout">Logout</button>
+</div>
+</div>
+</div>
+<header class="topbar">
+<a href="dashboard.html" class="brand"><img src="assets/intervia-logo.png" alt="Intervia"></a>
+<div class="topbar-right">
+<div class="profile">
+<div class="avatar" id="userAvatar">U</div>
+<div class="profile-text"><strong id="userName">Candidate</strong><span>Candidate</span></div>
+<i class="fa-solid fa-chevron-down chevron"></i>
+</div>
+</div>
+</header>
+
+<main class="page">
+<section class="page-heading">
+<div class="heading-content">
+<h1>Practice Interview</h1>
+<p>Start a personalized mock interview based on your resume and target role.</p>
+</div>
+
+<div class="resume-status" id="resumeStatus">
+<div class="resume-icon"><i class="fa-regular fa-file-lines"></i></div>
+<div class="resume-info">
+<strong id="resumeName">Resume</strong>
+<span id="resumeState">Checking resume...</span>
+</div>
+<i class="fa-solid fa-chevron-right arrow"></i>
+</div>
+</section>
+
+<section class="content-grid">
+<div class="configuration-card">
+<div class="card-title">
+<div class="title-icon"><i class="fa-solid fa-sliders"></i></div>
+<div><span></span>Choose Interview Configuration</div>
+</div>
+
+<div class="config-body">
+<div class="role-section">
+<label for="targetRole">Target Role</label>
+<select id="targetRole">
+<option value="Software Developer">Software Developer</option>
+<option value="Frontend Developer">Frontend Developer</option>
+<option value="Backend Developer">Backend Developer</option>
+<option value="Full Stack Developer">Full Stack Developer</option>
+<option value="Data Analyst">Data Analyst</option>
+<option value="Data Scientist">Data Scientist</option>
+<option value="AI/ML Engineer">AI/ML Engineer</option>
+<option value="DevOps Engineer">DevOps Engineer</option>
+<option value="QA Engineer">QA Engineer</option>
+</select>
+</div>
+
+<div class="type-section">
+<label>Interview Type</label>
+
+<div class="type-grid">
+<button class="type-card selected" data-type="technical">
+<span class="radio"></span>
+<div class="type-icon"><i class="fa-solid fa-code"></i></div>
+<strong>Technical</strong>
+<p>Focus on technical skills and problem solving</p>
+</button>
+
+<button class="type-card" data-type="behavioral">
+<span class="radio"></span>
+<div class="type-icon"><i class="fa-regular fa-user"></i></div>
+<strong>Behavioral</strong>
+<p>Focus on behavioral and soft skills</p>
+</button>
+
+<button class="type-card" data-type="full">
+<span class="radio"></span>
+<div class="type-icon"><i class="fa-solid fa-briefcase"></i></div>
+<strong>Full Mock Interview</strong>
+<p>Mix of technical and behavioral questions</p>
+</button>
+</div>
+</div>
+
+<div class="role-section">
+<label for="experienceLevel">Experience Level</label>
+<select id="experienceLevel">
+<option value="Fresher">Fresher</option>
+<option value="Entry Level">Entry Level</option>
+<option value="Mid Level" selected>Mid Level</option>
+<option value="Senior Level">Senior Level</option>
+<option value="Lead Level">Lead Level</option>
+</select>
+</div>
+
+<div class="question-section">
+<label>Number of Questions</label>
+
+<div class="question-options">
+<button data-count="5">5</button>
+<button data-count="10">10</button>
+<button class="selected" data-count="15">15 <i class="fa-solid fa-check"></i></button>
+<button data-count="20">20</button>
+</div>
+</div>
+
+<div class="estimate">
+<i class="fa-regular fa-circle-question"></i>
+<strong id="questionCountText">15 questions</strong>
+<span>•</span>
+<span id="timeText">Estimated time: 30–40 minutes</span>
+</div>
+
+<button class="start-btn" id="startInterviewBtn">
+<i class="fa-solid fa-play"></i>
+<span>Start Interview</span>
+</button>
+</div>
+</div>
+
+<aside class="info-column">
+<div class="info-card">
+<h2>What to Expect</h2>
+
+<div class="info-item">
+<span class="info-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+<div>
+<strong>Personalized Questions</strong>
+<p>Questions tailored to your resume and target role</p>
+</div>
+</div>
+
+<div class="info-item">
+<span class="info-icon"><i class="fa-solid fa-brain"></i></span>
+<div>
+<strong>AI Evaluation</strong>
+<p>Get AI-powered feedback on your answers</p>
+</div>
+</div>
+
+<div class="info-item">
+<span class="info-icon"><i class="fa-regular fa-chart-bar"></i></span>
+<div>
+<strong>Detailed Insights</strong>
+<p>View your performance and improvement areas</p>
+</div>
+</div>
+
+<div class="info-item">
+<span class="info-icon"><i class="fa-regular fa-clock"></i></span>
+<div>
+<strong>Interview History</strong>
+<p>Track your progress over time</p>
+</div>
+</div>
+</div>
+
+<div class="info-card tips-card">
+<h2><i class="fa-regular fa-lightbulb"></i> Interview Tips</h2>
+
+<div class="tip">
+<i class="fa-regular fa-circle-check"></i>
+<span>Be honest and authentic in your answers</span>
+</div>
+
+<div class="tip">
+<i class="fa-regular fa-circle-check"></i>
+<span>Take your time to think before answering</span>
+</div>
+
+<div class="tip">
+<i class="fa-regular fa-circle-check"></i>
+<span>Provide specific examples from your experience</span>
+</div>
+
+<div class="tip">
+<i class="fa-regular fa-circle-check"></i>
+<span>Ask for clarification if needed</span>
+</div>
+</div>
+</aside>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+<script src="js/practice.js"></script>
+<script src="js/menu.js"></script>
+</body>
+</html>

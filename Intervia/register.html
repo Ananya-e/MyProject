@@ -1,188 +1,321 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Intervia | Create Account</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/register.css">
-<link rel="stylesheet" href="css/toast.css">
-</head>
-<body>
-<div class="register-page">
-<section class="register-showcase">
-<a href="index.html" class="register-logo">
-<img src="assets/intervia-logo.png" alt="Intervia">
-</a>
-<div class="showcase-content">
-<div class="showcase-line"></div>
-<h1>Your AI Interview Coach</h1>
-<h2>Practice with purpose.<br>Perform with confidence.</h2>
-<p>Realistic AI interviews, instant feedback,<br>and insights that help you grow every day.</p>
-<div class="showcase-visual">
-<div class="visual-window">
-<div class="window-top">
-<span></span>
-<span></span>
-<span></span>
-</div>
-<div class="visual-content">
-<div class="visual-profile">
-<div class="profile-circle"></div>
-<div class="profile-lines">
-<i></i>
-<i></i>
-<i></i>
-</div>
-</div>
-<div class="ai-bubble">
-<span>AI</span>
-<small>+</small>
-</div>
-<div class="chart">
-<i></i>
-<i></i>
-<i></i>
-<i></i>
-</div>
-<div class="donut"></div>
-</div>
-</div>
-</div>
-<div class="showcase-features">
-<div class="showcase-feature">
-<div class="showcase-icon target-icon">
-<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4"></circle><circle cx="12" cy="12" r="1.5"></circle></svg>
-</div>
-<h3>Personalized</h3>
-<p>AI interviews tailored<br>to your goals</p>
-</div>
-<div class="showcase-feature">
-<div class="showcase-icon feedback-icon">
-<svg viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3V6Z"></path><path d="M8 10h8M8 13h5"></path></svg>
-</div>
-<h3>Insightful</h3>
-<p>Detailed feedback<br>to improve faster</p>
-</div>
-<div class="showcase-feature">
-<div class="showcase-icon progress-icon">
-<svg viewBox="0 0 24 24"><path d="M5 19V9M12 19V5M19 19V3"></path><path d="m4 7 5-3 5 2 6-4"></path></svg>
-</div>
-<h3>Progress Tracking</h3>
-<p>Track your performance<br>and growth over time</p>
-</div>
-</div>
-</div>
-</section>
-<section class="register-form-section">
-<div class="register-card">
-<div class="register-heading">
-<h2>Create Your Account</h2>
-<p>Join Intervia and start your journey<br>towards interview success.</p>
-</div>
-<form id="registerForm">
-<div class="name-email-row">
-<div class="form-group">
-<label for="name">Full Name</label>
-<div class="input-box">
-<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c.8-3.5 3.1-5.2 7-5.2s6.2 1.7 7 5.2"></path></svg>
-<input type="text" id="name" placeholder="Enter your full name" required>
-</div>
-</div>
-<div class="form-group">
-<label for="email">Email Address</label>
-<div class="input-box">
-<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
-<input type="email" id="email" placeholder="Enter your email address" required>
-</div>
-</div>
-</div>
-<div class="form-group">
-<label for="password">Password</label>
-<div class="input-box">
-<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-<input type="password" id="password" placeholder="Create a password" required>
-<button type="button" id="togglePassword" aria-label="Show password">
-<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
-</button>
-</div>
-</div>
-<div class="form-group">
-<label for="confirmPassword">Confirm Password</label>
-<div class="input-box">
-<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-<input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-<button type="button" id="toggleConfirmPassword" aria-label="Show password">
-<svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
-</button>
-</div>
-</div>
-<label class="terms">
-<input type="checkbox" id="terms" required>
-<span class="custom-checkbox"></span>
-<span>I agree to the <a href="#" id="termsLink">Terms of Service</a> and <a href="#" id="privacyLink">Privacy Policy</a></span>
-</label>
-<button type="submit" class="create-btn">Create Account </button>
-</form>
-<div class="register-divider"><span>OR</span></div>
-<button type="button" class="google-btn">
-<svg viewBox="0 0 24 24"><path d="M21.35 12.27c0-.79-.07-1.55-.23-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.92-4.2 2.92-7.39Z"></path><path d="M12 21.7c2.63 0 4.84-.87 6.45-2.34l-3.14-2.43c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.51A9.74 9.74 0 0 0 12 21.7Z"></path><path d="M6.54 13.83A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.26.31-1.83V7.66H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.34l3.24-2.51Z"></path><path d="M12 6.14c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.23 14.63 2.3 12 2.3a9.74 9.74 0 0 0-8.7 5.36l3.24 2.51C7.31 7.86 9.46 6.14 12 6.14Z"></path></svg>
-Sign up with Google
-</button>
-<p class="login-link">Already have an account? <a href="login.html">Sign in</a></p>
-</div>
-</section>
-</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Intervia | Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/register.css" />
+    <link rel="stylesheet" href="css/toast.css" />
+  </head>
+  <body>
+    <div class="register-page">
+      <section class="register-showcase">
+        <a href="index.html" class="register-logo">
+          <img src="assets/intervia-logo.png" alt="Intervia" />
+        </a>
+        <div class="showcase-content">
+          <div class="showcase-line"></div>
+          <h1>Your AI Interview Coach</h1>
+          <h2>Practice with purpose.<br />Perform with confidence.</h2>
+          <p>
+            Realistic AI interviews, instant feedback,<br />and insights that
+            help you grow every day.
+          </p>
+          <div class="showcase-visual">
+            <div class="visual-window">
+              <div class="window-top">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="visual-content">
+                <div class="visual-profile">
+                  <div class="profile-circle"></div>
+                  <div class="profile-lines">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                  </div>
+                </div>
+                <div class="ai-bubble">
+                  <span>AI</span>
+                  <small>+</small>
+                </div>
+                <div class="chart">
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                  <i></i>
+                </div>
+                <div class="donut"></div>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-features">
+            <div class="showcase-feature">
+              <div class="showcase-icon target-icon">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="8"></circle>
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <circle cx="12" cy="12" r="1.5"></circle>
+                </svg>
+              </div>
+              <h3>Personalized</h3>
+              <p>AI interviews tailored<br />to your goals</p>
+            </div>
+            <div class="showcase-feature">
+              <div class="showcase-icon feedback-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 6h14v10H9l-4 3V6Z"></path>
+                  <path d="M8 10h8M8 13h5"></path>
+                </svg>
+              </div>
+              <h3>Insightful</h3>
+              <p>Detailed feedback<br />to improve faster</p>
+            </div>
+            <div class="showcase-feature">
+              <div class="showcase-icon progress-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 19V9M12 19V5M19 19V3"></path>
+                  <path d="m4 7 5-3 5 2 6-4"></path>
+                </svg>
+              </div>
+              <h3>Progress Tracking</h3>
+              <p>Track your performance<br />and growth over time</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="register-form-section">
+        <div class="register-card">
+          <div class="register-heading">
+            <h2>Create Your Account</h2>
+            <p>
+              Join Intervia and start your journey<br />towards interview
+              success.
+            </p>
+          </div>
+          <form id="registerForm">
+            <div class="name-email-row">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <div class="input-box">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M5 20c.8-3.5 3.1-5.2 7-5.2s6.2 1.7 7 5.2"></path>
+                  </svg>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-box">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="m3 7 9 6 9-6"></path>
+                  </svg>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email address"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="input-box">
+                <svg viewBox="0 0 24 24">
+                  <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                </svg>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Create a password"
+                  required
+                />
+                <button
+                  type="button"
+                  id="togglePassword"
+                  aria-label="Show password"
+                >
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"
+                    ></path>
+                    <circle cx="12" cy="12" r="2.5"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="input-box">
+                <svg viewBox="0 0 24 24">
+                  <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                </svg>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="Confirm your password"
+                  required
+                />
+                <button
+                  type="button"
+                  id="toggleConfirmPassword"
+                  aria-label="Show password"
+                >
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"
+                    ></path>
+                    <circle cx="12" cy="12" r="2.5"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <label class="terms">
+              <input type="checkbox" id="terms" required />
+              <span class="custom-checkbox"></span>
+              <span
+                >I agree to the
+                <a href="#" id="termsLink">Terms of Service</a> and
+                <a href="#" id="privacyLink">Privacy Policy</a></span
+              >
+            </label>
+            <button type="submit" class="create-btn">Create Account</button>
+          </form>
+          <div class="register-divider"><span>OR</span></div>
+          <button type="button" class="google-btn">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M21.35 12.27c0-.79-.07-1.55-.23-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.92-4.2 2.92-7.39Z"
+              ></path>
+              <path
+                d="M12 21.7c2.63 0 4.84-.87 6.45-2.34l-3.14-2.43c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.51A9.74 9.74 0 0 0 12 21.7Z"
+              ></path>
+              <path
+                d="M6.54 13.83A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.26.31-1.83V7.66H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.34l3.24-2.51Z"
+              ></path>
+              <path
+                d="M12 6.14c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.23 14.63 2.3 12 2.3a9.74 9.74 0 0 0-8.7 5.36l3.24 2.51C7.31 7.86 9.46 6.14 12 6.14Z"
+              ></path>
+            </svg>
+            Sign up with Google
+          </button>
+          <p class="login-link">
+            Already have an account? <a href="login.html">Sign in</a>
+          </p>
+        </div>
+      </section>
+    </div>
 
-<div class="policy-overlay" id="policyOverlay">
-<div class="policy-modal">
-<button class="policy-close" id="policyClose" aria-label="Close">×</button>
-<div class="policy-content">
-<h2>Terms & Privacy Policy</h2>
-<p class="policy-intro">Please read the following information before creating your Intervia account.</p>
-<section>
-<h3>Terms of Service</h3>
-<p>Intervia is an AI-powered interview preparation platform designed to help users practice interviews, improve communication, and understand their interview performance.</p>
-<p>By creating an account, you agree to use Intervia responsibly and provide accurate information when registering and using the platform.</p>
-</section>
-<section>
-<h3>Use of the Service</h3>
-<p>You may use Intervia for personal interview preparation and learning. You should not misuse the platform, attempt to access another user's account, or interfere with the normal operation of the service.</p>
-</section>
-<section>
-<h3>User Information</h3>
-<p>You are responsible for keeping your account information and password secure. Please do not share your password with others.</p>
-</section>
-<section>
-<h3>Privacy Policy</h3>
-<p>Intervia may collect information such as your name, email address, resume information, interview responses, scores, and progress data to provide and improve the interview preparation experience.</p>
-</section>
-<section>
-<h3>How Your Data Is Used</h3>
-<p>Your information may be used to personalize interview questions, analyze your responses, generate feedback, track your progress, and improve the features of Intervia.</p>
-</section>
-<section>
-<h3>Resume & Interview Data</h3>
-<p>Information provided through your resume and interview sessions is used to generate relevant interview questions and performance insights within the application.</p>
-</section>
-<section>
-<h3>Data Security</h3>
-<p>Intervia takes reasonable measures to protect your account and application data. However, no online service can guarantee complete security of information.</p>
-</section>
-<section>
-<h3>Your Choices</h3>
-<p>You may choose whether to continue using the service and can request changes to your account information where supported by the application.</p>
-</section>
-<section>
-<h3>Agreement</h3>
-<p>By checking the agreement box during registration, you confirm that you have read and understood these Terms & Privacy Policy and agree to them.</p>
-</section>
-</div>
-</div>
-</div>
-<script src="js/toast.js"></script>
-<script src="js/register.js"></script>
-</body>
+    <div class="policy-overlay" id="policyOverlay">
+      <div class="policy-modal">
+        <button class="policy-close" id="policyClose" aria-label="Close">
+          ×
+        </button>
+        <div class="policy-content">
+          <h2>Terms & Privacy Policy</h2>
+          <p class="policy-intro">
+            Please read the following information before creating your Intervia
+            account.
+          </p>
+          <section>
+            <h3>Terms of Service</h3>
+            <p>
+              Intervia is an AI-powered interview preparation platform designed
+              to help users practice interviews, improve communication, and
+              understand their interview performance.
+            </p>
+            <p>
+              By creating an account, you agree to use Intervia responsibly and
+              provide accurate information when registering and using the
+              platform.
+            </p>
+          </section>
+          <section>
+            <h3>Use of the Service</h3>
+            <p>
+              You may use Intervia for personal interview preparation and
+              learning. You should not misuse the platform, attempt to access
+              another user's account, or interfere with the normal operation of
+              the service.
+            </p>
+          </section>
+          <section>
+            <h3>User Information</h3>
+            <p>
+              You are responsible for keeping your account information and
+              password secure. Please do not share your password with others.
+            </p>
+          </section>
+          <section>
+            <h3>Privacy Policy</h3>
+            <p>
+              Intervia may collect information such as your name, email address,
+              resume information, interview responses, scores, and progress data
+              to provide and improve the interview preparation experience.
+            </p>
+          </section>
+          <section>
+            <h3>How Your Data Is Used</h3>
+            <p>
+              Your information may be used to personalize interview questions,
+              analyze your responses, generate feedback, track your progress,
+              and improve the features of Intervia.
+            </p>
+          </section>
+          <section>
+            <h3>Resume & Interview Data</h3>
+            <p>
+              Information provided through your resume and interview sessions is
+              used to generate relevant interview questions and performance
+              insights within the application.
+            </p>
+          </section>
+          <section>
+            <h3>Data Security</h3>
+            <p>
+              Intervia takes reasonable measures to protect your account and
+              application data. However, no online service can guarantee
+              complete security of information.
+            </p>
+          </section>
+          <section>
+            <h3>Your Choices</h3>
+            <p>
+              You may choose whether to continue using the service and can
+              request changes to your account information where supported by the
+              application.
+            </p>
+          </section>
+          <section>
+            <h3>Agreement</h3>
+            <p>
+              By checking the agreement box during registration, you confirm
+              that you have read and understood these Terms & Privacy Policy and
+              agree to them.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+    <script src="js/toast.js"></script>
+    <script src="js/register.js"></script>
+  </body>
 </html>

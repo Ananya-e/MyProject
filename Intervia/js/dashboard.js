@@ -14,87 +14,50 @@ console.error("Dashboard error:",error);
 }
 },
 async query(query,variables={}){
-const response=await fetch(window.HASURA_URL,{
+const response=await fetch("http://127.0.0.1:5000/api/dashboard",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body:JSON.stringify({query,variables})
+body:JSON.stringify({
+user_id:userId
+})
 });
-const result=await response.json();
-if(result.errors){
-console.error(result.errors);
-throw new Error(result.errors[0].message);
-}
-return result.data;
-},
-async loadDashboard(){
-const query=`
-query DashboardData($userId:uuid!){
-user:users_by_pk(id:$userId){
-id
-full_name
-email
-profile_image
-target_role
-}
-resume:resumes(
-where:{user_id:{_eq:$userId},is_active:{_eq:true}}
-order_by:{uploaded_at:desc}
-limit:1
-){
-id
-file_name
-file_url
-uploaded_at
-}
-interviews:interviews(
-where:{user_id:{_eq:$userId}}
-order_by:{completed_at:desc}
-limit:10
-){
-id
-interview_type
-duration_minutes
-questions_asked
-overall_score
-rating
-started_at
-completed_at
-created_at
-}
-}
-`;
-const data=await this.query(query,{userId});
-const interviews=data.interviews||[];
-let scores=[];
-if(interviews.length){
-const ids=interviews.map(item=>item.id);
-const scoreQuery=`
-query InterviewScores($ids:[uuid!]!){
-interview_scores(
-where:{interview_id:{_in:$ids}}
-){
-id
-interview_id
-communication
-confidence
-technical_skills
-answer_structure
-}
-}
-`;
-const scoreData=await this.query(scoreQuery,{ids});
-scores=scoreData.interview_scores||[];
-}
-return{
-user:data.user,
-resume:data.resume?.[0]||null,
-interviews,
-scores,
 
+const result=await response.json();
+
+if(!response.ok||result.error){
+throw new Error(result.error||"Failed to load dashboard.");
+}
+
+return result;
+},
+
+async loadDashboard(){
+const response=await fetch("http://127.0.0.1:5000/api/dashboard",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:userId
+})
+});
+
+const result=await response.json();
+
+if(!response.ok||result.error){
+throw new Error(result.error||"Failed to load dashboard.");
+}
+
+return{
+user:result.user,
+resume:result.resume,
+interviews:result.interviews||[],
+scores:result.scores||[]
 };
 },
+
 render(data){
 const user=data.user;
 if(!user){
@@ -245,14 +208,16 @@ container.appendChild(item);
 });
 },
 setupEvents(){
-document.getElementById("logoutBtn")?.addEventListener("click",()=>{
-localStorage.removeItem("user_id");
-localStorage.removeItem("user_email");
-localStorage.removeItem("user_name");
-});
-document.getElementById("progressRange")?.addEventListener("change",()=>{
-this.loadDashboard().then(data=>this.renderProgress(data.interviews));
-});
+    const progressRange=document.getElementById("progressRange");
+
+    if(progressRange){
+        progressRange.addEventListener("change",async()=>{
+            const data=await this.loadDashboard();
+            if(data){
+                this.renderProgress(data.interviews);
+            }
+        });
+    }
 },
 text(id,value){
 const element=document.getElementById(id);

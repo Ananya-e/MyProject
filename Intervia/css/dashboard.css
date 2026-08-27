@@ -31,129 +31,12 @@ select {
   min-height: 100vh;
   display: flex;
 }
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 268px;
-  height: 100vh;
-  background: #fff;
-  border-right: 1px solid #e7ebf3;
-  padding: 27px 18px 20px;
-  display: flex;
-  flex-direction: column;
-  z-index: 20;
-}
-.sidebar-logo {
-  display: block;
-  padding: 0 26px 27px;
-}
-.sidebar-logo img {
-  width: 155px;
-  height: auto;
-  display: block;
-}
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.sidebar-link {
-  height: 46px;
-  padding: 0 15px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  border-radius: 10px;
-  color: #253657;
-  font-size: 14px;
-  font-weight: 500;
-  transition: 0.2s;
-}
-.sidebar-link svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: #627391;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex: none;
-}
-.sidebar-link:hover {
-  background: #f4f6ff;
-  color: #315cf1;
-}
-.sidebar-link.active {
-  background: linear-gradient(105deg, #2f66f5, #7140e7);
-  color: #fff;
-  box-shadow: 0 8px 20px rgba(65, 75, 224, 0.2);
-}
-.sidebar-link.active svg {
-  stroke: #fff;
-}
-.premium-card {
-  margin: 27px 17px 20px;
-  padding: 17px 15px 15px;
-  border-radius: 13px;
-  background: linear-gradient(145deg, #f3f3ff, #f7f5ff);
-  border: 1px solid #e5e7fa;
-}
-.premium-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #182b52;
-  font-weight: 700;
-  font-size: 14px;
-}
-.premium-title svg {
-  width: 17px;
-  height: 17px;
-  fill: #f2b62c;
-  stroke: #f2b62c;
-}
-.premium-card p {
-  font-size: 13px;
-  line-height: 1.65;
-  color: #596a85;
-  margin: 13px 0;
-}
-.premium-card button {
-  height: 38px;
-  width: 100%;
-  border: 0;
-  border-radius: 7px;
-  background: linear-gradient(105deg, #3265f3, #6a41e7);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.logout-link {
-  margin-top: auto;
-  height: 45px;
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: #304261;
-  font-size: 14px;
-}
-.logout-link svg {
-  width: 19px;
-  height: 19px;
-  fill: none;
-  stroke: #627391;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 .main-content {
-  margin-left: 268px;
-  width: calc(100% - 268px);
+  margin-left: 0;
+  width: 100%;
   min-height: 100vh;
 }
+
 .topbar {
   height: 92px;
   background: #fff;
@@ -199,39 +82,6 @@ select {
   display: flex;
   align-items: center;
   gap: 22px;
-}
-.notification-btn {
-  position: relative;
-  border: 0;
-  background: transparent;
-  width: 30px;
-  height: 35px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-.notification-btn svg {
-  width: 23px;
-  height: 23px;
-  fill: none;
-  stroke: #273958;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.notification-btn span {
-  position: absolute;
-  right: -1px;
-  top: -1px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #6942e7;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  display: grid;
-  place-items: center;
 }
 .profile-btn {
   border: 0;
@@ -1119,14 +969,8 @@ select {
   color: #687791;
   margin-top: 5px;
 }
-@media (max-width: 1250px) {
-  .sidebar {
-    width: 230px;
-  }
-  .main-content {
-    margin-left: 230px;
-    width: calc(100% - 230px);
-  }
+@media (max-width: 1000px) {
+
   .top-cards {
     grid-template-columns: 1fr 1fr;
   }
@@ -1135,42 +979,6 @@ select {
   }
   .welcome-visual {
     right: 20px;
-  }
-}
-@media (max-width: 1050px) {
-  .sidebar {
-    width: 78px;
-    padding: 20px 10px;
-  }
-  .sidebar-logo {
-    padding: 0 9px 25px;
-  }
-  .sidebar-logo img {
-    width: 51px;
-    height: 51px;
-    object-fit: cover;
-    object-position: left;
-  }
-  .sidebar-link {
-    justify-content: center;
-    padding: 0;
-  }
-  .sidebar-link span,
-  .premium-card,
-  .logout-link span {
-    display: none;
-  }
-  .logout-link {
-    justify-content: center;
-    padding: 0;
-  }
-  .main-content {
-    margin-left: 78px;
-    width: calc(100% - 78px);
-  }
-  .middle-grid,
-  .bottom-grid {
-    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 800px) {
@@ -1202,13 +1010,11 @@ select {
   }
 }
 @media (max-width: 600px) {
-  .sidebar {
-    display: none;
-  }
   .main-content {
-    margin-left: 0;
-    width: 100%;
-  }
+  margin-left: 0;
+  width: 100%;
+}
+
   .topbar {
     height: 72px;
   }

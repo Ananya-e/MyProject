@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>Intervia - Resume</title>
+    <link rel="stylesheet" href="css/resume.css" />
+    <link rel="stylesheet" href="css/toast.css" />
+    <link rel="stylesheet" href="css/logout.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/menu.css" />
+  </head>
+  <body>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <aside class="side-menu" id="sideMenu">
+      <div class="side-menu-header">
+        <img
+          src="assets/intervia-logo.png"
+          alt="Intervia"
+          class="side-menu-logo"
+        />
+        <button class="side-menu-close" id="menuClose" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="side-menu-nav">
+        <a href="dashboard.html"
+          ><i class="fa-regular fa-house"></i><span>Dashboard</span></a
+        >
+        <a href="practice.html"
+          ><i class="fa-regular fa-message"></i
+          ><span>Practice Interview</span></a
+        >
+        <a href="interviews.html"
+          ><i class="fa-regular fa-rectangle-list"></i
+          ><span>My Interviews</span></a
+        >
+        <a href="progress.html"
+          ><i class="fa-regular fa-chart-line"></i><span>Progress</span></a
+        >
+        <a href="reports.html"
+          ><i class="fa-regular fa-chart-bar"></i
+          ><span>Reports &amp; Analytics</span></a
+        >
+        <a href="resume.html"
+          ><i class="fa-regular fa-file-lines"></i><span>Resume</span></a
+        >
+      </nav>
+
+      <button class="side-menu-logout" id="logoutBtn">
+  <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+</button>
+    </aside>
+
+    <div class="logout-overlay" id="logoutOverlay">
+      <div class="logout-box">
+        <div class="logout-icon"><i class="fa-solid fa-exclamation"></i></div>
+        <h2>Are you sure?</h2>
+        <p>Do you really want to logout from Intervia?</p>
+        <div class="logout-actions">
+          <button class="logout-cancel" id="cancelLogout">Cancel</button>
+<button class="logout-confirm" id="confirmLogout">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h1>Resume</h1>
+          <p>
+            Upload and manage the resume used for your personalized interviews.
+          </p>
+        </div>
+
+        <div class="profile-area">
+          <div class="profile-avatar" id="profileAvatar">A</div>
+          <div class="profile-info">
+            <strong id="profileName">User</strong>
+            <span>Candidate</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="resume-container">
+        <div class="resume-header">
+          <div>
+            <h2>Your Resume</h2>
+            <p>
+              Your resume helps Intervia create questions based on your actual
+              skills and experience.
+            </p>
+          </div>
+        </div>
+
+        <div class="upload-card" id="uploadCard">
+          <div class="upload-icon">
+            <span>↑</span>
+          </div>
+
+          <h3>Upload your resume</h3>
+
+          <p>Upload your latest resume in PDF or DOCX format.</p>
+
+          <p class="upload-limit">Maximum file size: 10 MB</p>
+
+          <input type="file" id="resumeFile" accept=".pdf,.docx" hidden />
+
+          <button type="button" id="chooseFileBtn" class="primary-btn">
+            Choose Resume
+          </button>
+
+          <div class="selected-file" id="selectedFile" hidden>
+            <div class="file-info">
+              <div class="file-icon">PDF</div>
+              <div>
+                <strong id="fileName">resume.pdf</strong>
+                <span id="fileSize">0 MB</span>
+              </div>
+            </div>
+
+            <button type="button" id="removeFileBtn" class="remove-file">
+              ×
+            </button>
+          </div>
+
+          <button type="button" id="uploadBtn" class="upload-btn" hidden>
+            Upload & Analyze Resume
+          </button>
+        </div>
+
+        <div class="analysis-card" id="analysisCard" hidden>
+          <div class="analysis-header">
+            <div class="analysis-status-icon">✓</div>
+            <div>
+              <h3>Resume Analysis</h3>
+              <p>Your resume has been analyzed by Intervia.</p>
+            </div>
+          </div>
+
+          <div class="profile-grid">
+            <div class="profile-section">
+              <h4>Candidate</h4>
+              <p id="candidateName">—</p>
+            </div>
+
+            <div class="profile-section">
+              <h4>Experience Level</h4>
+              <p id="experienceLevel">—</p>
+            </div>
+
+            <div class="profile-section full-width">
+              <h4>Professional Summary</h4>
+              <p id="resumeSummary">—</p>
+            </div>
+
+            <div class="profile-section full-width">
+              <h4>Skills</h4>
+              <div class="skills-list" id="skillsList"></div>
+            </div>
+          </div>
+
+          <button type="button" id="replaceResumeBtn" class="secondary-btn">
+            Replace Resume
+          </button>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">✦</div>
+
+          <div>
+            <h3>How Intervia uses your resume</h3>
+            <p>
+              Intervia analyzes your skills, experience, projects and education
+              to create interview questions that are relevant to your target
+              role.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/resume.js"></script>
+    <script src="js/menu.js"></script>
+  </body>
+</html>
