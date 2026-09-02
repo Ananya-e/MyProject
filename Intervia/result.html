@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | Interview Result</title>
+<link rel="stylesheet" href="css/result.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+<header class="topbar">
+<div class="topbar-left">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+<i class="fa-solid fa-bars"></i>
+</button>
+<a href="dashboard.html" class="brand">
+<img src="assets/intervia-logo.png" alt="Intervia">
+</a>
+</div>
+<div class="interview-status">
+<span class="status-label">Interview completed</span>
+<span class="status-dot"></span>
+</div>
+<div class="profile">
+<div class="avatar" id="profileAvatar">U</div>
+<div class="profile-info">
+<strong id="profileName">User</strong>
+<span>Candidate</span>
+</div>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+<div class="side-menu-header">
+<img src="assets/intervia-logo.png" alt="Intervia" class="side-menu-logo">
+<button class="side-menu-close" id="menuClose" aria-label="Close menu">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<nav class="side-menu-nav">
+<a href="dashboard.html">
+<i class="fa-solid fa-house"></i>
+<span>Dashboard</span>
+</a>
+<a href="practice.html">
+<i class="fa-regular fa-message"></i>
+<span>Practice Interview</span>
+</a>
+<a href="interviews.html">
+<i class="fa-regular fa-rectangle-list"></i>
+<span>My Interviews</span>
+</a>
+<a href="progress.html">
+<i class="fa-solid fa-chart-line"></i>
+<span>Progress</span>
+</a>
+<a href="resume.html">
+<i class="fa-regular fa-file-lines"></i>
+<span>Resume</span>
+</a>
+</nav>
+<button class="side-menu-logout" id="logoutBtn">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</button>
+</aside>
+
+<div class="logout-overlay" id="logoutOverlay">
+<div class="logout-box">
+<div class="logout-icon">
+<i class="fa-solid fa-right-from-bracket"></i>
+</div>
+<h2>Logout?</h2>
+<p>Are you sure you want to logout from Intervia?</p>
+<div class="logout-actions">
+<button class="logout-cancel" id="cancelLogout">Cancel</button>
+<button class="logout-confirm" id="confirmLogout">Logout</button>
+</div>
+</div>
+</div>
+
+<main class="result-page">
+
+<section class="result-header">
+<div class="result-heading">
+<p class="eyebrow">RESULT</p>
+<h1>Interview Completed!</h1>
+<p class="subtitle">Great job completing the interview. Here's your performance overview.</p>
+<div class="interview-meta">
+<span><strong>Role:</strong> <span id="resultRole">-</span></span>
+<span><strong>Experience:</strong> <span id="resultExperience">-</span></span>
+<span><strong>Type:</strong> <span id="resultType">-</span></span>
+<span><strong>Date:</strong> <span id="resultDate">-</span></span>
+</div>
+</div>
+<div class="result-header-actions">
+<button class="outline-btn" id="downloadReportBtn">
+<i class="fa-solid fa-download"></i>
+<span>Download Report</span>
+</button>
+<button class="primary-btn" id="viewInterviewsBtn">
+<span>View All Interviews</span>
+<i class="fa-solid fa-arrow-right"></i>
+</button>
+</div>
+</section>
+
+<section class="score-grid">
+
+<div class="score-card">
+<p class="score-label">OVERALL SCORE</p>
+<div class="score-value">
+<strong id="overallScore">-</strong>
+<span>/ 100</span>
+</div>
+<p class="score-message" id="scoreMessage">-</p>
+<div class="score-bar">
+<div class="score-bar-fill" id="scoreBarFill"></div>
+</div>
+</div>
+
+<div class="score-card">
+<p class="score-label">RATING</p>
+<div class="rating-value">
+<i class="fa-solid fa-star"></i>
+<strong id="ratingValue">-</strong>
+<span>/ 5</span>
+</div>
+<p class="score-message" id="ratingMessage">-</p>
+<div class="stars" id="ratingStars"></div>
+</div>
+
+<div class="score-card">
+<p class="score-label">QUESTIONS ATTEMPTED</p>
+<div class="score-value">
+<strong id="answeredQuestions">-</strong>
+<span>/ <span id="totalQuestions">-</span></span>
+</div>
+<p class="score-message" id="answeredMessage">-</p>
+<div class="score-bar">
+<div class="score-bar-fill" id="answeredBarFill"></div>
+</div>
+</div>
+
+<div class="score-card">
+<p class="score-label">TIME TAKEN</p>
+<div class="time-value">
+<i class="fa-regular fa-clock"></i>
+<strong id="timeTaken">-</strong>
+</div>
+<p class="score-message" id="timeMessage">Interview duration</p>
+</div>
+
+</section>
+
+<section class="summary-card">
+
+<div class="score-circle">
+<div class="circle-progress">
+<strong id="circleScore">-</strong>
+<span>Overall</span>
+</div>
+</div>
+
+<div class="summary-content">
+<h2>Performance Summary</h2>
+<p id="performanceSummary">Your interview evaluation will appear here.</p>
+
+<div class="summary-columns">
+
+<div class="summary-column strengths">
+<h3>
+<i class="fa-regular fa-circle-check"></i>
+Strengths
+</h3>
+<ul id="strengthsList"></ul>
+</div>
+
+<div class="summary-column improvements">
+<h3>
+<i class="fa-regular fa-circle-xmark"></i>
+Areas to Improve
+</h3>
+<ul id="improvementsList"></ul>
+</div>
+
+</div>
+</div>
+
+</section>
+
+<section class="question-performance">
+
+<div class="section-heading">
+<div>
+<h2>Question-wise Performance</h2>
+<p>Review your performance for each interview question.</p>
+</div>
+<div class="difficulty-legend">
+<span><i class="easy-dot"></i>Easy</span>
+<span><i class="medium-dot"></i>Medium</span>
+<span><i class="hard-dot"></i>Hard</span>
+</div>
+</div>
+
+<div class="question-table-wrapper">
+<table class="question-table">
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Difficulty</th>
+<th>Score</th>
+<th>Feedback</th>
+</tr>
+</thead>
+<tbody id="questionTableBody"></tbody>
+</table>
+</div>
+
+<button class="view-all-btn" id="viewAllQuestionsBtn">
+<span>View All Questions</span>
+<i class="fa-solid fa-chevron-down"></i>
+</button>
+
+</section>
+
+<section class="improvement-footer">
+
+<div class="improvement-message">
+<div class="trophy-icon">
+<i class="fa-solid fa-trophy"></i>
+</div>
+<div>
+<h3>Keep Improving!</h3>
+<p>Practice more interviews to track your progress and improve your skills.</p>
+</div>
+</div>
+
+<div class="footer-actions">
+<button class="outline-btn" id="practiceAgainBtn">
+<i class="fa-solid fa-rotate"></i>
+<span>Practice Again</span>
+</button>
+<button class="primary-btn" id="backDashboardBtn">
+<i class="fa-solid fa-house"></i>
+<span>Back to Dashboard</span>
+</button>
+</div>
+
+</section>
+
+</main>
+
+<div class="feedback-overlay" id="feedbackOverlay">
+<div class="feedback-modal">
+<button class="feedback-close" id="feedbackClose">
+<i class="fa-solid fa-xmark"></i>
+</button>
+<p class="eyebrow">QUESTION FEEDBACK</p>
+<h2 id="feedbackQuestion">Question</h2>
+<div class="feedback-score">
+<span>Score</span>
+<strong id="feedbackScore">-</strong>
+<span>/ 10</span>
+</div>
+<div class="feedback-answer">
+<h3>Your Answer</h3>
+<p id="feedbackAnswer">-</p>
+</div>
+<div class="feedback-content">
+<h3>AI Feedback</h3>
+<p id="feedbackText">-</p>
+</div>
+</div>
+</div>
+
+<script src="js/menu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="js/result.js"></script>
+</body>
+</html>

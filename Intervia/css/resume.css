@@ -18,7 +18,7 @@ box-sizing:border-box;
 }
 
 body{
-font-family:Inter,Manrope,Arial,sans-serif;
+font-family:"DM Sans",sans-serif;
 background:var(--bg);
 color:var(--text);
 min-height:100vh;
@@ -35,64 +35,77 @@ cursor:pointer;
 
 .main-content{
 margin-left:0;
+width:100%;
 min-height:100vh;
-padding:0 38px 50px;
+padding:72px 38px 50px;
 }
 
 .topbar{
-min-height:92px;
+height:72px;
+background:#fff;
+border-bottom:1px solid var(--border);
 display:flex;
 align-items:center;
 justify-content:space-between;
-border-bottom:1px solid var(--border);
-margin-bottom:36px;
+padding:0 28px;
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:1000;
 }
 
-.topbar h1{
-font-size:27px;
-font-weight:750;
-letter-spacing:-.5px;
+.topbar-left{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.topbar-logo{
+width:120px;
+height:auto;
+display:block;
+}
+
+.topbar-actions{
+display:flex;
+align-items:center;
+margin-left:auto;
+}
+
+.profile-btn{
+border:0;
+background:transparent;
+display:flex;
+align-items:center;
+gap:10px;
 color:var(--navy);
+cursor:pointer;
+padding:0;
 }
 
-.topbar p{
-margin-top:6px;
-font-size:14px;
-color:var(--muted);
-}
-
-.profile-area{
-display:flex;
-align-items:center;
-gap:11px;
-}
-
-.profile-avatar{
-width:42px;
-height:42px;
+.profile-btn img{
+width:40px;
+height:40px;
 border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-background:linear-gradient(135deg,#dfe4ff,#f0eaff);
-color:var(--blue);
-font-size:15px;
-font-weight:800;
+object-fit:cover;
 }
 
 .profile-info{
 display:flex;
 flex-direction:column;
-gap:3px;
+align-items:flex-start;
+gap:2px;
 }
 
 .profile-info strong{
-font-size:14px;
+font-size:13px;
+font-weight:700;
 color:var(--navy);
 }
 
 .profile-info span{
-font-size:12px;
+font-size:10px;
 color:var(--muted);
 }
 
@@ -121,10 +134,10 @@ color:var(--muted);
 .upload-card{
 background:#fff;
 border:1px solid var(--border);
-border-radius:20px;
+border-radius:16px;
 padding:48px 35px;
 text-align:center;
-box-shadow:0 8px 30px rgba(20,30,60,.045);
+box-shadow:0 6px 22px rgba(24,47,95,.04);
 transition:.2s ease;
 }
 
@@ -277,9 +290,9 @@ transform:translateY(-1px);
 margin-top:24px;
 background:#fff;
 border:1px solid var(--border);
-border-radius:20px;
+border-radius:16px;
 padding:28px;
-box-shadow:0 8px 30px rgba(20,30,60,.045);
+box-shadow:0 6px 22px rgba(24,47,95,.04);
 }
 
 .analysis-header{
@@ -417,20 +430,7 @@ max-width:760px;
 
 .main-content{
 margin-left:0;
-padding:0 18px 35px;
-}
-
-.topbar{
-min-height:80px;
-margin-bottom:25px;
-}
-
-.topbar h1{
-font-size:23px;
-}
-
-.topbar p{
-font-size:13px;
+padding:72px 18px 35px;
 }
 
 .profile-info{
@@ -455,9 +455,6 @@ grid-column:auto;
 }
 
 @media(max-width:480px){
-.sidebar-nav{
-grid-template-columns:1fr;
-}
 
 .topbar{
 align-items:flex-start;

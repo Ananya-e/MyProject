@@ -90,6 +90,8 @@ timeText=document.getElementById("timeText");
     }
     startBtn.disabled = true;
     startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Preparing Interview...</span>';
+    localStorage.setItem("target_role",targetRole.value);
+    localStorage.setItem("experience_level",experienceLevel.value);
     try {
       const response = await fetch(
         "http://127.0.0.1:5000/api/interview/start",

@@ -11,7 +11,19 @@ const candidateName=document.getElementById("candidateName");
 const experienceLevel=document.getElementById("experienceLevel");
 const resumeSummary=document.getElementById("resumeSummary");
 const skillsList=document.getElementById("skillsList");
+const profileName=document.getElementById("profileName");
+const profileImage=document.getElementById("profileImage");
 
+const storedUser=localStorage.getItem("user");
+
+if(storedUser){
+    try{
+        const user=JSON.parse(storedUser);
+        profileName.textContent=user.name||user.full_name||"User";
+    }catch(error){
+        console.error("User data error:",error);
+    }
+}
 let selectedResume=null;
 
 const MAX_FILE_SIZE=10*1024*1024;
@@ -120,8 +132,10 @@ formData.append("user_id",userId);
 
 function displayResumeAnalysis(resume){
     analysisCard.hidden=false;
+    localStorage.setItem("resume_analysis",JSON.stringify(resume));
 
     const candidate=resume.candidate||{};
+    localStorage.setItem("resume_analysis",JSON.stringify(resume));
 
     candidateName.textContent=candidate.name||"Not detected";
     experienceLevel.textContent=resume.experience_level||"Not specified";

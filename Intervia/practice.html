@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="css/menu.css">
 </head>
 <body>
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
 
 <div class="menu-overlay" id="menuOverlay"></div>
 
@@ -20,12 +19,21 @@
 </div>
 
 <nav class="side-menu-nav">
-<a href="dashboard.html"><i class="fa-regular fa-house"></i><span>Dashboard</span></a>
-<a href="practice.html"><i class="fa-regular fa-message"></i><span>Practice Interview</span></a>
-<a href="interviews.html"><i class="fa-regular fa-rectangle-list"></i><span>My Interviews</span></a>
-<a href="progress.html"><i class="fa-regular fa-chart-line"></i><span>Progress</span></a>
-<a href="reports.html"><i class="fa-regular fa-chart-bar"></i><span>Reports &amp; Analytics</span></a>
-<a href="resume.html"><i class="fa-regular fa-file-lines"></i><span>Resume</span></a>
+<a href="dashboard.html">
+<i class="fa-regular fa-house"></i><span>Dashboard</span>
+</a>
+<a href="resume.html">
+<i class="fa-regular fa-file-lines"></i><span>Resume</span>
+</a>
+<a href="practice.html">
+<i class="fa-regular fa-message"></i><span>Practice Interview</span>
+</a>
+<a href="interviews.html">
+<i class="fa-regular fa-rectangle-list"></i><span>My Interviews</span>
+</a>
+<a href="progress.html">
+<i class="fa-regular fa-chart-line"></i><span>Progress</span>
+</a>
 </nav>
 
 <button class="side-menu-logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
@@ -43,12 +51,22 @@
 </div>
 </div>
 <header class="topbar">
-<a href="dashboard.html" class="brand"><img src="assets/intervia-logo.png" alt="Intervia"></a>
+<div class="topbar-left">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+<i class="fa-solid fa-bars"></i>
+</button>
+<a href="dashboard.html" class="brand">
+<img src="assets/intervia-logo.png" alt="Intervia">
+</a>
+</div>
+
 <div class="topbar-right">
 <div class="profile">
 <div class="avatar" id="userAvatar">U</div>
-<div class="profile-text"><strong id="userName">Candidate</strong><span>Candidate</span></div>
-<i class="fa-solid fa-chevron-down chevron"></i>
+<div class="profile-text">
+<strong id="userName">Candidate</strong>
+<span>Candidate</span>
+</div>
 </div>
 </div>
 </header>

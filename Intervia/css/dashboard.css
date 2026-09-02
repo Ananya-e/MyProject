@@ -31,21 +31,38 @@ select {
   min-height: 100vh;
   display: flex;
 }
-.main-content {
-  margin-left: 0;
-  width: 100%;
-  min-height: 100vh;
+.main-content{
+  margin-left:0;
+  width:100%;
+  min-height:100vh;
+  padding-top:72px;
 }
 
-.topbar {
-  height: 92px;
-  background: #fff;
-  border-bottom: 1px solid #e8ecf3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 28px;
-  position: relative;
+.topbar{
+  height:72px;
+  background:#fff;
+  border-bottom:1px solid #e8ecf3;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+}
+
+.topbar-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.topbar-logo{
+  width:120px;
+  height:auto;
+  display:block;
 }
 .search-box {
   width: 465px;
@@ -76,37 +93,44 @@ select {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.topbar-actions {
-  position: absolute;
-  right: 27px;
-  display: flex;
-  align-items: center;
-  gap: 22px;
+.topbar-actions{
+  display:flex;
+  align-items:center;
 }
-.profile-btn {
-  border: 0;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #16294d;
-  font-size: 13px;
-  cursor: pointer;
+.profile-btn{
+  border:0;
+  background:transparent;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#16294d;
+  cursor:pointer;
+  padding:0;
 }
-.profile-btn img {
-  width: 37px;
-  height: 37px;
-  border-radius: 50%;
-  object-fit: cover;
+
+.profile-btn img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
 }
-.profile-btn svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: #687891;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+
+.profile-info{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:2px;
+}
+
+.profile-info strong{
+  font-size:13px;
+  font-weight:700;
+  color:#16294d;
+}
+
+.profile-info span{
+  font-size:10px;
+  color:#687791;
 }
 .content {
   padding: 0 22px 25px;
@@ -151,7 +175,7 @@ select {
 .primary-btn {
   height: 46px;
   padding: 0 17px;
-  border-radius: 8px;
+  border-radius: 10px;
   background: linear-gradient(105deg, #2865f3, #7040e6);
   display: inline-flex;
   align-items: center;
@@ -159,7 +183,7 @@ select {
   color: #fff;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 9px 20px rgba(58, 78, 215, 0.2);
+  box-shadow: 0 8px 20px rgba(79,70,229,.2);
 }
 .primary-btn svg {
   width: 17px;
@@ -396,57 +420,9 @@ select {
 .visual-chart i:nth-child(3) {
   height: 30px;
 }
-.visual-bubble {
-  position: absolute;
-  right: 270px;
-  top: 18px;
-  width: 70px;
-  height: 53px;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 8px 18px rgba(56, 72, 138, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-.visual-bubble span {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #4b63ef;
-}
-.visual-chart {
-  position: absolute;
-  right: 5px;
-  top: 10px;
-  width: 90px;
-  height: 45px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 8px 18px rgba(56, 72, 138, 0.08);
-  display: flex;
-  align-items: flex-end;
-  gap: 5px;
-  padding: 9px 13px;
-}
-.visual-chart i {
-  width: 9px;
-  border-radius: 3px 3px 0 0;
-  background: #8060eb;
-}
-.visual-chart i:nth-child(1) {
-  height: 14px;
-}
-.visual-chart i:nth-child(2) {
-  height: 22px;
-}
-.visual-chart i:nth-child(3) {
-  height: 28px;
-}
 .top-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-columns: 1fr 2fr;
   gap: 12px;
   margin-top: 15px;
 }
@@ -454,8 +430,8 @@ select {
 .panel {
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 13px;
-  box-shadow: 0 5px 18px rgba(24, 47, 95, 0.025);
+  border-radius: 16px;
+  box-shadow: 0 6px 22px rgba(24,47,95,.04);
 }
 .info-card {
   min-height: 205px;
@@ -863,12 +839,10 @@ select {
 }
 .bottom-grid {
   display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 12px;
+  grid-template-columns: 1fr;
   margin-top: 13px;
 }
-.focus-panel,
-.quick-panel {
+.focus-panel {
   min-height: 213px;
 }
 .focus-item {
@@ -881,16 +855,14 @@ select {
 .focus-item:last-child {
   margin-bottom: 0;
 }
-.focus-icon,
-.quick-icon {
+.focus-icon{
   width: 36px;
   height: 36px;
   border-radius: 8px;
   display: grid;
   place-items: center;
 }
-.focus-icon svg,
-.quick-icon svg {
+.focus-icon svg{
   width: 19px;
   height: 19px;
   fill: none;
@@ -934,48 +906,12 @@ select {
   font-size: 12px;
   cursor: pointer;
 }
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-.quick-card {
-  height: 132px;
-  border: 1px solid #e4e8f0;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: #fff;
-  transition: 0.2s;
-}
-.quick-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(26, 52, 104, 0.07);
-}
-.quick-icon {
-  width: 43px;
-  height: 43px;
-  margin-bottom: 11px;
-}
-.quick-card strong {
-  font-size: 11px;
-  color: #14264a;
-}
-.quick-card > span {
-  font-size: 12px;
-  color: #687791;
-  margin-top: 5px;
-}
 @media (max-width: 1000px) {
-
   .top-cards {
     grid-template-columns: 1fr 1fr;
   }
   .readiness-card {
-    grid-column: 1/-1;
+    grid-column: auto;
   }
   .welcome-visual {
     right: 20px;
@@ -983,14 +919,13 @@ select {
 }
 @media (max-width: 800px) {
   .topbar {
-    justify-content: flex-start;
-    padding-left: 20px;
+    padding:0 20px;
   }
   .search-box {
     width: 50%;
   }
   .topbar-actions {
-    right: 15px;
+     margin-left:auto;
   }
   .welcome-banner {
     padding: 0 25px;
@@ -1005,15 +940,13 @@ select {
   .readiness-card {
     grid-column: auto;
   }
-  .quick-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  
 }
 @media (max-width: 600px) {
   .main-content {
-  margin-left: 0;
-  width: 100%;
-}
+    margin-left: 0;
+    width: 100%;
+  }
 
   .topbar {
     height: 72px;
@@ -1064,7 +997,5 @@ select {
   .focus-text p {
     white-space: normal;
   }
-  .quick-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+
 }

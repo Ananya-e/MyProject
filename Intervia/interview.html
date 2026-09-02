@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | Interview</title>
+<link rel="stylesheet" href="css/interview.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+<header class="topbar">
+<div class="topbar-left">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+<a href="dashboard.html" class="brand"><img src="assets/intervia-logo.png" alt="Intervia"></a>
+</div>
+<div class="interview-status">
+<span class="status-label">Interview in progress</span>
+<span class="status-dot"></span>
+</div>
+<div class="profile">
+<div class="avatar" id="profileAvatar">U</div>
+<div class="profile-info">
+<strong id="profileName">User</strong>
+<span>Candidate</span>
+</div>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+<div class="side-menu-header">
+<img src="assets/intervia-logo.png" alt="Intervia" class="side-menu-logo">
+<button class="side-menu-close" id="menuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<nav class="side-menu-nav">
+<a href="dashboard.html"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+<a href="practice.html" class="active"><i class="fa-regular fa-message"></i><span>Practice Interview</span></a>
+<a href="interviews.html"><i class="fa-regular fa-rectangle-list"></i><span>My Interviews</span></a>
+<a href="progress.html"><i class="fa-solid fa-chart-line"></i><span>Progress</span></a>
+<a href="resume.html"><i class="fa-regular fa-file-lines"></i><span>Resume</span></a>
+</nav>
+<button class="side-menu-logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+</aside>
+
+<div class="logout-overlay" id="logoutOverlay">
+<div class="logout-box">
+<div class="logout-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+<h2>Logout?</h2>
+<p>Are you sure you want to logout from Intervia?</p>
+<div class="logout-actions">
+<button class="logout-cancel" id="cancelLogout">Cancel</button>
+<button class="logout-confirm" id="confirmLogout">Logout</button>
+</div>
+</div>
+</div>
+
+<main class="interview-page">
+<section class="interview-header">
+<div>
+<p class="eyebrow" id="interviewType">FULL MOCK INTERVIEW</p>
+<div class="interview-details">
+    <span>
+        <strong>Role:</strong>
+        <span id="targetRoleDisplay">-</span>
+    </span>
+
+    <span>
+        <strong>Experience:</strong>
+        <span id="experienceDisplay">-</span>
+    </span>
+</div>
+<h1>AI Mock Interview</h1>
+<p class="subtitle">Answer each question as you would in a real interview.</p>
+</div>
+<div class="question-counter">
+<span id="currentQuestion">1</span>
+<span>/</span>
+<span id="totalQuestions">-</span>
+</div>
+</section>
+
+<div class="progress-track">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<section class="question-card">
+<div class="question-meta">
+<span class="question-label">QUESTION</span>
+<span id="questionNumber">Question 1</span>
+</div>
+
+<h2 id="questionText">Loading question...</h2>
+
+<div class="answer-section">
+<label for="answerInput">Your Answer</label>
+<textarea id="answerInput" placeholder="Type your answer here..." rows="9"></textarea>
+<div class="answer-hint">
+<i class="fa-regular fa-lightbulb"></i>
+<span>Take your time and answer clearly with specific examples where possible.</span>
+</div>
+</div>
+<div class="cancel-interview-area">
+    <button class="cancel-interview-btn" id="cancelInterviewBtn">
+        <i class="fa-solid fa-xmark"></i>
+        Cancel Interview
+    </button>
+</div>
+
+<div class="interview-actions">
+<button class="secondary-btn" id="previousBtn" disabled>
+
+<i class="fa-solid fa-arrow-left"></i>
+<span>Previous</span>
+</button>
+<button class="primary-btn" id="nextBtn">
+<span>Next Question</span>
+<i class="fa-solid fa-arrow-right"></i>
+</button>
+</div>
+</section>
+
+<section class="question-navigation">
+<div class="navigation-title">
+<span>Interview Progress</span>
+<span id="answeredCount">0 answered</span>
+</div>
+<div class="question-dots" id="questionDots"></div>
+</section>
+</main>
+
+<script src="js/menu.js"></script>
+<script src="js/interview.js"></script>
+</body>
+</html>

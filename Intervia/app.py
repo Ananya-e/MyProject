@@ -476,39 +476,47 @@ def login():
             "message": "Server error."
         }), 500
 
-@app.route("/api/dashboard",methods=["POST"])
+@app.route("/api/dashboard", methods=["POST"])
 def dashboard_data():
     try:
-        data=request.get_json()
-        user_id=data.get("user_id")
+        data = request.get_json() or {}
+        user_id = data.get("user_id")
 
         if not user_id:
-            return jsonify({"error":"User ID is required."}),400
+            return jsonify({"error": "User ID is required."}), 400
 
-        query="""
-        query DashboardData($userId:uuid!){
-            user:users_by_pk(id:$userId){
+        query = """
+        query DashboardData($userId: uuid!) {
+            user: users_by_pk(id: $userId) {
                 id
                 full_name
                 email
                 profile_image
                 target_role
             }
-            resume:resumes(
-                where:{user_id:{_eq:$userId},is_active:{_eq:true}}
-                order_by:{uploaded_at:desc}
-                limit:1
-            ){
+
+            resume: resumes(
+                where: {
+                    user_id: {_eq: $userId},
+                    is_active: {_eq: true}
+                },
+                order_by: {uploaded_at: desc},
+                limit: 1
+            ) {
                 id
                 file_name
                 file_url
                 uploaded_at
             }
-            interviews:interviews(
-                where:{user_id:{_eq:$userId}}
-                order_by:{completed_at:desc}
-                limit:10
-            ){
+
+            interviews: interviews(
+                where: {
+                    user_id: {_eq: $userId},
+                    completed_at: {_is_null: false}
+                },
+                order_by: {completed_at: desc},
+                limit: 10
+            ) {
                 id
                 interview_type
                 duration_minutes
@@ -522,78 +530,39 @@ def dashboard_data():
         }
         """
 
-        response=requests.post(
+        response = requests.post(
             HASURA_URL,
             headers=HEADERS,
             json={
-                "query":query,
-                "variables":{"userId":user_id}
+                "query": query,
+                "variables": {
+                    "userId": user_id
+                }
             }
         )
 
-        result=response.json()
+        result = response.json()
 
         if "errors" in result:
-            print("Hasura dashboard error:",result["errors"])
+            print("Hasura dashboard error:", result["errors"])
             return jsonify({
-                "error":result["errors"][0]["message"]
-            }),500
+                "error": result["errors"][0]["message"]
+            }), 500
 
-        dashboard=result["data"]
-        interviews=dashboard.get("interviews") or []
-
-        scores=[]
-
-        if interviews:
-            ids=[item["id"] for item in interviews]
-
-            score_query="""
-            query InterviewScores($ids:[uuid!]!){
-                interview_scores(
-                    where:{interview_id:{_in:$ids}}
-                ){
-                    id
-                    interview_id
-                    communication
-                    confidence
-                    technical_skills
-                    answer_structure
-                }
-            }
-            """
-
-            score_response=requests.post(
-                HASURA_URL,
-                headers=HEADERS,
-                json={
-                    "query":score_query,
-                    "variables":{"ids":ids}
-                }
-            )
-
-            score_result=score_response.json()
-
-            if "errors" in score_result:
-                print("Hasura score error:",score_result["errors"])
-                return jsonify({
-                    "error":score_result["errors"][0]["message"]
-                }),500
-
-            scores=score_result["data"].get("interview_scores") or []
+        dashboard = result["data"]
 
         return jsonify({
-            "success":True,
-            "user":dashboard.get("user"),
-            "resume":(dashboard.get("resume") or [None])[0],
-            "interviews":interviews,
-            "scores":scores
-        })
+            "success": True,
+            "user": dashboard.get("user"),
+            "resume": (dashboard.get("resume") or [None])[0],
+            "interviews": dashboard.get("interviews") or []
+        }), 200
 
     except Exception as e:
-        print("Dashboard API error:",str(e))
+        print("Dashboard API error:", str(e))
         return jsonify({
-            "error":str(e)
-        }),500
+            "error": str(e)
+        }), 500
 
 INTERVIEW_QUESTIONS_SCHEMA = {
     "type": "object",
@@ -612,6 +581,36 @@ INTERVIEW_QUESTIONS_SCHEMA = {
         }
     },
     "required": ["questions"]
+}
+INTERVIEW_EVALUATION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "evaluations": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "question_number": {"type": "integer"},
+                    "score": {"type": "integer"},
+                    "feedback": {"type": "string"}
+                },
+                "required": [
+                    "question_number",
+                    "score",
+                    "feedback"
+                ]
+            }
+        },
+        "overall_score": {"type": "integer"},
+        "rating": {"type": "integer"},
+        "summary": {"type": "string"}
+    },
+    "required": [
+        "evaluations",
+        "overall_score",
+        "rating",
+        "summary"
+    ]
 }
 
 @app.route("/api/interview/start", methods=["POST"])
@@ -692,20 +691,118 @@ def start_interview():
             indent=2
         )
 
+        previous_interviews_query = """
+        query GetPreviousInterviews($userId: uuid!) {
+            interviews(
+                where: {user_id: {_eq: $userId}},
+                order_by: {created_at: desc}
+            ) {
+                id
+                created_at
+            }
+        }
+        """
+
+        previous_interviews_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": previous_interviews_query,
+                "variables": {
+                    "userId": user_id
+                }
+            }
+        )
+
+        previous_interviews_result = previous_interviews_response.json()
+
+        if "errors" in previous_interviews_result:
+            print(
+                "Previous interviews lookup error:",
+                previous_interviews_result["errors"]
+            )
+            return jsonify({
+                "error": "Could not load previous interview history."
+            }), 500
+
+        previous_interviews = (
+            previous_interviews_result["data"].get("interviews") or []
+        )
+
+        previous_questions = []
+
+        if previous_interviews:
+            previous_interview_ids = [
+                interview["id"]
+                for interview in previous_interviews
+            ]
+
+            previous_questions_query = """
+            query GetPreviousQuestions($interviewIds: [uuid!]!) {
+                interview_questions(
+                    where: {interview_id: {_in: $interviewIds}},
+                    order_by: {created_at: desc}
+                ) {
+                    question
+                }
+            }
+            """
+
+            previous_questions_response = requests.post(
+                HASURA_URL,
+                headers=HEADERS,
+                json={
+                    "query": previous_questions_query,
+                    "variables": {
+                        "interviewIds": previous_interview_ids
+                    }
+                }
+            )
+
+            previous_questions_result = previous_questions_response.json()
+
+            if "errors" in previous_questions_result:
+                print(
+                    "Previous questions lookup error:",
+                    previous_questions_result["errors"]
+                )
+                return jsonify({
+                    "error": "Could not load previous interview questions."
+                }), 500
+
+            previous_questions = [
+                item["question"]
+                for item in previous_questions_result["data"].get(
+                    "interview_questions"
+                ) or []
+                if item.get("question")
+            ]
+
+        previous_questions_text = "\n".join(
+            f"- {question}"
+            for question in previous_questions
+        )
+
+        if not previous_questions_text:
+            previous_questions_text = "No previous interview questions. This is the candidate's first interview."
+
         if interview_type == "technical":
             interview_focus = """
 Focus mainly on technical knowledge, programming concepts,
 technologies, projects, architecture, debugging and problem solving.
+Include behavioral or introductory questions only where they naturally
+fit a realistic technical interview.
 """
         elif interview_type == "behavioral":
             interview_focus = """
 Focus mainly on behavioral questions, communication,
-teamwork, leadership, conflict handling and real experience.
+teamwork, leadership, conflict handling, decision making and real experience.
+Use the candidate's resume to make the behavioral questions specific.
 """
         else:
             interview_focus = """
-Create a balanced interview containing technical,
-project-based and behavioral questions.
+Create a balanced interview containing introductory,
+technical, project-based, problem-solving and behavioral questions.
 """
 
         interview_prompt = f"""
@@ -728,34 +825,61 @@ INTERVIEW FOCUS:
 CANDIDATE RESUME:
 {resume_json}
 
+QUESTIONS ASKED IN PREVIOUS INTERVIEWS:
+{previous_questions_text}
+
 IMPORTANT RULES:
 
 1. Generate exactly {question_count} questions.
-2. Questions must be based on the candidate's actual resume.
-3. Do not invent technologies, companies, projects or experience.
-4. Use the target role to decide what skills should be tested.
-5. Start with easier questions and gradually increase difficulty.
-6. Include resume-specific questions.
-7. Include project questions when projects exist.
-8. Avoid repeating the same question.
-9. Questions should sound like realistic human interview questions.
-10. Do not provide answers.
-11. Do not provide explanations.
-12. Return only the requested JSON.
+2. The first question should feel like a realistic interview opening.
+3. For the opening question, use a natural variation of a question such as asking the candidate to introduce themselves, summarize their background, or walk through their experience.
+4. Do not use the exact phrase "Tell me about yourself" every time.
+5. Questions must be based on the candidate's actual resume.
+6. Do not invent technologies, companies, projects, education or experience.
+7. Use the target role to decide what knowledge and skills should be tested.
+8. Include resume-specific questions.
+9. Include project questions when projects exist.
+10. Start with easier questions and gradually increase difficulty.
+11. Avoid asking questions from previous interviews.
+12. Do not repeat the same question using slightly different wording.
+13. Do not repeat a previous question unless it is especially important for evaluating the candidate.
+14. If a previous topic is important, test it using a meaningfully different question rather than copying the old question.
+15. For a 5-question interview, strongly prefer all new questions.
+16. For larger interviews, prioritize new questions while allowing occasional natural revisiting of important skills.
+17. Questions should sound like realistic human interview questions.
+18. Questions should match the selected interview type.
+19. Do not provide answers.
+20. Do not provide explanations.
+21. Return only the requested JSON.
 
-Each question must contain:
-- question
-- category
-- difficulty
+Question progression should generally follow this pattern:
+
+Question 1:
+Realistic opening/introduction question.
+
+Early questions:
+Resume, background, basic technical or project questions.
+
+Middle questions:
+Deeper technical, project or behavioral questions.
+
+Later questions:
+Harder technical, problem-solving, scenario or role-specific questions.
 
 Allowed categories:
 technical, project, behavioral, problem-solving, resume
 
 Allowed difficulty values:
 easy, medium, hard
+
+Each question must contain:
+- question
+- category
+- difficulty
 """
 
         print("Generating interview questions...")
+        print(f"Previous questions available: {len(previous_questions)}")
 
         ai_response = gemini_client.models.generate_content(
             model="gemini-3.5-flash-lite",
@@ -936,6 +1060,403 @@ easy, medium, hard
             "details": str(e)
         }), 500
 
-    
+
+@app.route("/api/interview/submit", methods=["POST"])
+def submit_interview():
+    try:
+        data = request.get_json() or {}
+
+        user_id = data.get("user_id")
+        interview_id = data.get("interview_id")
+        answers = data.get("answers") or []
+
+        if not user_id:
+            return jsonify({"error": "User ID is required."}), 400
+
+        if not interview_id:
+            return jsonify({"error": "Interview ID is required."}), 400
+
+        if not answers:
+            return jsonify({"error": "Interview answers are required."}), 400
+
+        interview_query = """
+        query GetInterview($interviewId: uuid!, $userId: uuid!) {
+            interviews(
+                where: {
+                    id: {_eq: $interviewId},
+                    user_id: {_eq: $userId}
+                },
+                limit: 1
+            ) {
+                id
+                interview_type
+                questions_asked
+                started_at
+            }
+        }
+        """
+
+        interview_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": interview_query,
+                "variables": {
+                    "interviewId": interview_id,
+                    "userId": user_id
+                }
+            }
+        )
+
+        interview_result = interview_response.json()
+
+        if "errors" in interview_result:
+            print("Interview lookup error:", interview_result["errors"])
+            return jsonify({
+                "error": "Could not load the interview."
+            }), 500
+
+        interviews = interview_result["data"].get("interviews") or []
+
+        if not interviews:
+            return jsonify({
+                "error": "Interview not found."
+            }), 404
+
+        interview = interviews[0]
+
+        questions_query = """
+        query GetInterviewQuestions($interviewId: uuid!) {
+            interview_questions(
+                where: {interview_id: {_eq: $interviewId}},
+                order_by: {question_number: asc}
+            ) {
+                id
+                question_number
+                question
+            }
+        }
+        """
+
+        questions_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": questions_query,
+                "variables": {
+                    "interviewId": interview_id
+                }
+            }
+        )
+
+        questions_result = questions_response.json()
+
+        if "errors" in questions_result:
+            print("Questions lookup error:", questions_result["errors"])
+            return jsonify({
+                "error": "Could not load interview questions."
+            }), 500
+
+        questions = questions_result["data"].get("interview_questions") or []
+
+        if len(questions) != len(answers):
+            return jsonify({
+                "error": "The number of answers does not match the interview questions."
+            }), 400
+
+        answer_map = {
+            int(item.get("question_number")): str(
+                item.get("answer", "")
+            ).strip()
+            for item in answers
+        }
+
+        evaluation_input = []
+
+        for question in questions:
+            question_number = question["question_number"]
+
+            evaluation_input.append({
+                "question_number": question_number,
+                "question": question["question"],
+                "answer": answer_map.get(question_number, "")
+            })
+
+        evaluation_json = json.dumps(
+            evaluation_input,
+            ensure_ascii=False,
+            indent=2
+        )
+
+        evaluation_prompt = f"""
+You are Intervia's AI interview evaluator.
+
+Evaluate the candidate's answers for a mock interview.
+
+INTERVIEW TYPE:
+{interview["interview_type"]}
+
+QUESTIONS AND ANSWERS:
+{evaluation_json}
+
+Evaluate every answer independently.
+
+Scoring:
+0 = no answer or completely incorrect
+1-2 = very weak
+3-4 = below average
+5-6 = acceptable
+7-8 = good
+9 = excellent
+10 = exceptional
+
+Consider:
+- Correctness
+- Relevance
+- Technical understanding
+- Clarity
+- Completeness
+- Practical reasoning
+- Communication quality
+
+For behavioral questions, consider:
+- Situation/context
+- Candidate's actions
+- Reasoning
+- Result
+- Reflection
+
+For technical questions, consider:
+- Accuracy
+- Understanding of concepts
+- Appropriate technical terminology
+- Problem-solving approach
+
+IMPORTANT:
+1. Evaluate every question.
+2. Do not invent information about the candidate.
+3. Judge only the answer that was actually provided.
+4. A short answer may receive a lower score if it lacks necessary explanation.
+5. Do not punish concise answers when they correctly answer the question.
+6. Give specific and useful feedback.
+7. Do not provide a model answer.
+8. Calculate the overall score from all question scores.
+9. Rating must be an integer from 1 to 5.
+10. Return only the requested JSON.
+
+The summary should briefly explain the candidate's overall performance and the most important improvement area.
+"""
+
+        print(f"Evaluating interview {interview_id}...")
+
+        ai_response = gemini_client.models.generate_content(
+            model="gemini-3.5-flash-lite",
+            contents=evaluation_prompt,
+            config={
+                "response_mime_type": "application/json",
+                "response_schema": INTERVIEW_EVALUATION_SCHEMA
+            }
+        )
+
+        if not ai_response.text:
+            return jsonify({
+                "error": "AI returned an empty evaluation."
+            }), 502
+
+        evaluation_data = json.loads(ai_response.text)
+
+        evaluations = evaluation_data.get("evaluations") or []
+
+        if len(evaluations) != len(questions):
+            return jsonify({
+                "error": "AI did not evaluate all interview questions."
+            }), 502
+
+        overall_score = max(
+            0,
+            min(100, int(evaluation_data.get("overall_score", 0)))
+        )
+
+        rating = max(
+            1,
+            min(5, int(evaluation_data.get("rating", 1)))
+        )
+
+        summary = evaluation_data.get("summary", "")
+
+        evaluation_map = {
+            int(item["question_number"]): item
+            for item in evaluations
+        }
+
+        for question in questions:
+            question_number = question["question_number"]
+            evaluation = evaluation_map.get(question_number)
+
+            if not evaluation:
+                continue
+
+            answer = answer_map.get(question_number, "")
+
+            score = max(
+                0,
+                min(10, int(evaluation.get("score", 0)))
+            )
+
+            update_question_mutation = """
+            mutation UpdateInterviewQuestion(
+                $id: uuid!,
+                $answer: String!,
+                $score: numeric!,
+                $feedback: String!
+            ) {
+                update_interview_questions_by_pk(
+                    pk_columns: {id: $id},
+                    _set: {
+                        answer: $answer,
+                        score: $score,
+                        feedback: $feedback
+                    }
+                ) {
+                    id
+                    question_number
+                    answer
+                    score
+                    feedback
+                }
+            }
+            """
+
+            update_response = requests.post(
+                HASURA_URL,
+                headers=HEADERS,
+                json={
+                    "query": update_question_mutation,
+                    "variables": {
+                        "id": question["id"],
+                        "answer": answer,
+                        "score": score,
+                        "feedback": evaluation.get("feedback", "")
+                    }
+                }
+            )
+
+            update_result = update_response.json()
+
+            if "errors" in update_result:
+                print(
+                    "Question update error:",
+                    update_result["errors"]
+                )
+                return jsonify({
+                    "error": "Could not save interview evaluation."
+                }), 500
+
+        from datetime import datetime, timezone
+
+        completed_datetime = datetime.now(timezone.utc)
+        completed_at = completed_datetime.isoformat()
+
+        started_datetime = datetime.fromisoformat(
+            interview["started_at"].replace("Z", "+00:00")
+        )
+
+        elapsed_seconds = max(
+            0,
+            int(
+                (
+                    completed_datetime - started_datetime
+                ).total_seconds()
+            )
+        )
+
+        duration_minutes = max(
+            1,
+            round(elapsed_seconds / 60)
+        )
+
+        update_interview_mutation = """
+        mutation CompleteInterview(
+            $id: uuid!,
+            $overallScore: numeric!,
+            $rating: Int!,
+            $completedAt: timestamptz!,
+            $durationMinutes: Int!
+        ) {
+            update_interviews_by_pk(
+                pk_columns: {id: $id},
+                _set: {
+                    overall_score: $overallScore,
+                    rating: $rating,
+                    completed_at: $completedAt,
+                    duration_minutes: $durationMinutes
+                }
+            ) {
+                id
+                overall_score
+                rating
+                completed_at
+                duration_minutes
+            }
+        }
+        """
+
+        update_interview_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": update_interview_mutation,
+                "variables": {
+                    "id": interview_id,
+                    "overallScore": overall_score,
+                    "rating": rating,
+                    "completedAt": completed_at,
+                    "durationMinutes": duration_minutes
+                }
+            }
+        )
+
+        update_interview_result = update_interview_response.json()
+
+        if "errors" in update_interview_result:
+            print(
+                "Interview completion error:",
+                update_interview_result["errors"]
+            )
+            return jsonify({
+                "error": "Could not complete the interview."
+            }), 500
+
+        print(
+            f"Interview {interview_id} evaluated. "
+            f"Overall score: {overall_score}, "
+            f"Rating: {rating}, "
+            f"Duration: {duration_minutes} minutes"
+        )
+
+        return jsonify({
+            "success": True,
+            "interview_id": interview_id,
+            "overall_score": overall_score,
+            "rating": rating,
+            "summary": summary,
+            "evaluations": evaluations,
+            "completed_at": completed_at,
+            "duration_minutes": duration_minutes
+        }), 200
+
+    except json.JSONDecodeError:
+        print("AI returned invalid evaluation JSON.")
+        return jsonify({
+            "error": "AI returned an invalid evaluation."
+        }), 502
+
+    except Exception as e:
+        print("Submit interview error:", str(e))
+        return jsonify({
+            "error": "Unable to evaluate the interview.",
+            "details": str(e)
+        }), 500
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
