@@ -1,5 +1,11 @@
+const API_BASE=window.API_BASE||"http://127.0.0.1:5000";
+
 document.addEventListener("DOMContentLoaded",()=>{
-const data=JSON.parse(sessionStorage.getItem("current_interview")||"null");
+
+const data=JSON.parse(
+sessionStorage.getItem("current_interview")||"null"
+);
+
 if(!data||!Array.isArray(data.questions)||!data.questions.length){
 window.location.href="practice.html";
 return;
@@ -7,7 +13,13 @@ return;
 
 const questions=data.questions;
 let currentIndex=0;
-const answers=questions.map(q=>q.answer||"");
+let submitting=false;
+let cancelling=false;
+
+const answers=questions.map(question=>{
+if(typeof question==="string")return"";
+return question.answer||"";
+});
 
 const currentQuestion=document.getElementById("currentQuestion");
 const totalQuestions=document.getElementById("totalQuestions");
@@ -28,110 +40,271 @@ const cancelBtn=document.getElementById("cancelInterviewBtn");
 
 totalQuestions.textContent=questions.length;
 
-const user=JSON.parse(localStorage.getItem("user")||"null");
-const userName=localStorage.getItem("user_name")||user?.full_name||user?.name||"User";
+const user=JSON.parse(
+localStorage.getItem("user")||"null"
+);
 
+const userName=
+localStorage.getItem("user_name")||
+user?.full_name||
+user?.name||
+"User";
+
+if(profileName){
 profileName.textContent=userName;
+}
+
+if(profileAvatar){
 profileAvatar.textContent=userName.charAt(0).toUpperCase();
+}
 
-const type=data.interview?.interview_type||data.interview_type||"FULL MOCK INTERVIEW";
-interviewType.textContent=type.replace(/_/g," ").toUpperCase();
+const interview=
+data.interview||
+{};
 
-targetRoleDisplay.textContent=data.target_role||"Not specified";
-experienceDisplay.textContent=data.experience_level||"Not specified";
+const interviewId=
+interview.id||
+data.id||
+null;
+
+const type=
+interview.interview_type||
+data.interview_type||
+"FULL MOCK INTERVIEW";
+
+const targetRole=
+data.target_role||
+interview.target_role||
+localStorage.getItem("target_role")||
+"Not specified";
+
+const experienceLevel=
+data.experience_level||
+interview.experience_level||
+localStorage.getItem("experience_level")||
+"Not specified";
+
+if(interviewType){
+interviewType.textContent=
+String(type)
+.replace(/_/g," ")
+.toUpperCase();
+}
+
+if(targetRoleDisplay){
+targetRoleDisplay.textContent=targetRole;
+}
+
+if(experienceDisplay){
+experienceDisplay.textContent=experienceLevel;
+}
 
 const toast=document.createElement("div");
+
 toast.className="toast";
+
 document.body.appendChild(toast);
 
-let toastTimer;
+let toastTimer=null;
 
 function showToast(message){
+
 clearTimeout(toastTimer);
+
 toast.textContent=message;
+
 toast.classList.add("show");
+
 toastTimer=setTimeout(()=>{
 toast.classList.remove("show");
 },3000);
 }
 
 function getQuestionText(question){
-if(typeof question==="string")return question;
-return question.question||question.text||"Question unavailable.";
+
+if(typeof question==="string"){
+return question;
+}
+
+return(
+question?.question||
+question?.text||
+"Question unavailable."
+);
 }
 
 function saveCurrentAnswer(){
-answers[currentIndex]=answerInput.value.trim();
-questions[currentIndex].answer=answers[currentIndex];
+
+if(!answerInput){
+return;
+}
+
+const answer=answerInput.value.trim();
+
+answers[currentIndex]=answer;
+
+if(typeof questions[currentIndex]==="object"){
+questions[currentIndex].answer=answer;
+}
+
 data.questions=questions;
-sessionStorage.setItem("current_interview",JSON.stringify(data));
+
+sessionStorage.setItem(
+"current_interview",
+JSON.stringify(data)
+);
 }
 
 function updateAnsweredCount(){
-const count=answers.filter(answer=>answer.trim()!=="").length;
-answeredCount.textContent=`${count} answered`;
+
+const count=
+answers.filter(answer=>answer.trim()!=="").length;
+
+if(answeredCount){
+answeredCount.textContent=
+`${count} answered`;
+}
+}
+
+function updateProgress(){
+
+if(!progressFill){
+return;
+}
+
+const progress=
+((currentIndex+1)/questions.length)*100;
+
+progressFill.style.width=
+`${progress}%`;
 }
 
 function renderDots(){
+
+if(!questionDots){
+return;
+}
+
 questionDots.innerHTML="";
 
 questions.forEach((question,index)=>{
+
 const dot=document.createElement("button");
 
 dot.type="button";
+
 dot.className="question-dot";
 
-if(index===currentIndex)dot.classList.add("current");
-if(answers[index].trim()!=="")dot.classList.add("answered");
+if(index===currentIndex){
+dot.classList.add("current");
+}
+
+if(answers[index].trim()!==""){
+dot.classList.add("answered");
+}
 
 dot.textContent=index+1;
+
 dot.title=`Question ${index+1}`;
 
 dot.addEventListener("click",()=>{
+
+if(submitting||cancelling){
+return;
+}
+
 if(index>currentIndex&&!answers[currentIndex].trim()){
-showToast("Please answer the current question before moving ahead.");
-answerInput.focus();
+
+showToast(
+"Please answer the current question before moving ahead."
+);
+
+answerInput?.focus();
+
 return;
 }
 
 saveCurrentAnswer();
+
 currentIndex=index;
+
 renderQuestion();
+
 });
 
 questionDots.appendChild(dot);
+
 });
 }
 
 function renderQuestion(){
-const question=questions[currentIndex];
 
-currentQuestion.textContent=currentIndex+1;
-questionNumber.textContent=`Question ${currentIndex+1}`;
-questionText.textContent=getQuestionText(question);
-answerInput.value=answers[currentIndex]||"";
+const question=
+questions[currentIndex];
 
-previousBtn.disabled=currentIndex===0;
-
-if(currentIndex===questions.length-1){
-nextBtn.innerHTML='<span>Submit Interview</span><i class="fa-solid fa-check"></i>';
-}else{
-nextBtn.innerHTML='<span>Next Question</span><i class="fa-solid fa-arrow-right"></i>';
+if(currentQuestion){
+currentQuestion.textContent=
+currentIndex+1;
 }
 
-const progress=((currentIndex+1)/questions.length)*100;
-progressFill.style.width=`${progress}%`;
+if(questionNumber){
+questionNumber.textContent=
+`Question ${currentIndex+1}`;
+}
 
+if(questionText){
+questionText.textContent=
+getQuestionText(question);
+}
+
+if(answerInput){
+answerInput.value=
+answers[currentIndex]||"";
+
+answerInput.focus();
+}
+
+if(previousBtn){
+previousBtn.disabled=
+currentIndex===0||submitting||cancelling;
+}
+
+if(nextBtn){
+
+if(currentIndex===questions.length-1){
+
+nextBtn.innerHTML=
+'<span>Submit Interview</span><i class="fa-solid fa-check"></i>';
+
+}else{
+
+nextBtn.innerHTML=
+'<span>Next Question</span><i class="fa-solid fa-arrow-right"></i>';
+}
+
+nextBtn.disabled=
+submitting||
+cancelling;
+}
+
+updateProgress();
 updateAnsweredCount();
 renderDots();
 }
 
 function createConfirmBox(message,onConfirm){
-const overlay=document.createElement("div");
-overlay.className="interview-confirm-overlay";
 
-const box=document.createElement("div");
-box.className="interview-confirm-box";
+const overlay=
+document.createElement("div");
+
+overlay.className=
+"interview-confirm-overlay";
+
+const box=
+document.createElement("div");
+
+box.className=
+"interview-confirm-box";
 
 box.innerHTML=`
 <div class="confirm-icon">
@@ -146,86 +319,223 @@ box.innerHTML=`
 `;
 
 overlay.appendChild(box);
+
 document.body.appendChild(overlay);
 
-box.querySelector(".confirm-cancel").addEventListener("click",()=>{
+const stayBtn=
+box.querySelector(".confirm-cancel");
+
+const leaveBtn=
+box.querySelector(".confirm-leave");
+
+stayBtn?.addEventListener("click",()=>{
 overlay.remove();
 });
 
-box.querySelector(".confirm-leave").addEventListener("click",()=>{
+leaveBtn?.addEventListener("click",()=>{
 overlay.remove();
 onConfirm();
 });
 
 overlay.addEventListener("click",event=>{
-if(event.target===overlay)overlay.remove();
-});
+
+if(event.target===overlay){
+overlay.remove();
 }
 
-function cancelInterview(){
+});
+
+}
+
+async function cancelInterview(){
+
+if(cancelling||submitting){
+return;
+}
+
 createConfirmBox(
 "Your current answers will be lost if you leave this interview.",
-()=>{
-sessionStorage.removeItem("current_interview");
-window.location.href="practice.html";
+async()=>{
+
+if(cancelling){
+return;
 }
+
+cancelling=true;
+
+if(cancelBtn){
+cancelBtn.disabled=true;
+}
+
+if(nextBtn){
+nextBtn.disabled=true;
+}
+
+if(previousBtn){
+previousBtn.disabled=true;
+}
+
+const userId=
+localStorage.getItem("user_id");
+
+if(!userId||!interviewId){
+
+showToast(
+"Interview information is missing. Please start a new interview."
+);
+
+cancelling=false;
+
+if(cancelBtn){
+cancelBtn.disabled=false;
+}
+
+return;
+}
+
+try{
+
+const response=
+await fetch(
+`${API_BASE}/api/interview/cancel`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:userId,
+interview_id:interviewId
+})
+}
+);
+
+const result=
+await response.json();
+
+if(!response.ok){
+
+throw new Error(
+result.error||
+"Unable to cancel the interview."
 );
 }
 
-answerInput.addEventListener("input",()=>{
-answers[currentIndex]=answerInput.value.trim();
-questions[currentIndex].answer=answers[currentIndex];
-updateAnsweredCount();
-renderDots();
-});
+sessionStorage.removeItem(
+"current_interview"
+);
 
-previousBtn.addEventListener("click",()=>{
-saveCurrentAnswer();
+window.location.href=
+"practice.html";
 
-if(currentIndex>0){
-currentIndex--;
-renderQuestion();
+}catch(error){
+
+console.error(
+"Cancel interview error:",
+error
+);
+
+cancelling=false;
+
+if(cancelBtn){
+cancelBtn.disabled=false;
 }
-});
 
-nextBtn.addEventListener("click",async()=>{
-const answer=answerInput.value.trim();
+if(nextBtn){
+nextBtn.disabled=false;
+}
 
-if(!answer){
-showToast("Please answer this question before continuing.");
-answerInput.focus();
+if(previousBtn){
+previousBtn.disabled=
+currentIndex===0;
+}
+
+showToast(
+error.message||
+"Unable to cancel the interview."
+);
+
+}
+
+}
+);
+
+}
+
+async function submitInterview(){
+
+if(submitting||cancelling){
 return;
 }
 
 saveCurrentAnswer();
 
-if(currentIndex<questions.length-1){
-currentIndex++;
-renderQuestion();
-return;
-}
-
-const unanswered=answers.filter(answer=>!answer.trim()).length;
+const unanswered=
+answers.filter(
+answer=>!answer.trim()
+).length;
 
 if(unanswered>0){
-showToast(`Please answer all ${unanswered} remaining question${unanswered===1?"":"s"} before submitting.`);
+
+showToast(
+`Please answer all ${unanswered} remaining question${unanswered===1?"":"s"} before submitting.`
+);
+
+const firstUnanswered=
+answers.findIndex(
+answer=>!answer.trim()
+);
+
+if(firstUnanswered!==-1){
+
+currentIndex=
+firstUnanswered;
+
+renderQuestion();
+
+answerInput?.focus();
+
+}
+
 return;
 }
 
-const userId=localStorage.getItem("user_id");
-const interviewId=data.interview?.id;
+const userId=
+localStorage.getItem("user_id");
 
 if(!userId||!interviewId){
-showToast("Interview information is missing. Please start a new interview.");
+
+showToast(
+"Interview information is missing. Please start a new interview."
+);
+
 return;
 }
 
+submitting=true;
+
+if(nextBtn){
+
 nextBtn.disabled=true;
+
+nextBtn.innerHTML=
+'<i class="fa-solid fa-spinner fa-spin"></i><span>Evaluating...</span>';
+}
+
+if(previousBtn){
 previousBtn.disabled=true;
-nextBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i><span>Evaluating...</span>';
+}
+
+if(cancelBtn){
+cancelBtn.disabled=true;
+}
 
 try{
-const response=await fetch("http://127.0.0.1:5000/api/interview/submit",{
+
+const response=
+await fetch(
+`${API_BASE}/api/interview/submit`,
+{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -233,61 +543,273 @@ headers:{
 body:JSON.stringify({
 user_id:userId,
 interview_id:interviewId,
-answers:answers.map((answer,index)=>({
+answers:answers.map(
+(answer,index)=>({
 question_number:index+1,
 answer:answer
-}))
 })
-});
+)
+})
+}
+);
 
-const result=await response.json();
+const result=
+await response.json();
 
 if(!response.ok){
-throw new Error(result.error||"Unable to evaluate the interview.");
+
+throw new Error(
+result.error||
+"Unable to evaluate the interview."
+);
 }
 
 const completeResult={
 ...result,
-interview:data.interview,
+interview:data.interview||{
+id:interviewId
+},
 questions:data.questions,
-target_role:data.target_role,
-experience_level:data.experience_level,
-interview_type:data.interview_type||data.interview?.interview_type
+target_role:targetRole,
+experience_level:experienceLevel,
+interview_type:
+data.interview_type||
+data.interview?.interview_type||
+type
 };
 
-sessionStorage.setItem("interview_result",JSON.stringify(completeResult));
-sessionStorage.removeItem("current_interview");
+sessionStorage.setItem(
+"interview_result",
+JSON.stringify(completeResult)
+);
 
-window.location.href="result.html";
+sessionStorage.removeItem(
+"current_interview"
+);
+
+window.location.href=
+"result.html";
 
 }catch(error){
-console.error("Interview evaluation error:",error);
-showToast(error.message||"Unable to evaluate the interview.");
+
+console.error(
+"Interview evaluation error:",
+error
+);
+
+submitting=false;
+
+if(nextBtn){
 
 nextBtn.disabled=false;
-previousBtn.disabled=currentIndex===0;
 
-nextBtn.innerHTML='<span>Submit Interview</span><i class="fa-solid fa-check"></i>';
+nextBtn.innerHTML=
+'<span>Submit Interview</span><i class="fa-solid fa-check"></i>';
 }
-});
 
-cancelBtn.addEventListener("click",cancelInterview);
+if(previousBtn){
+previousBtn.disabled=
+currentIndex===0;
+}
 
-const menuLinks=document.querySelectorAll(".side-menu-nav a");
+if(cancelBtn){
+cancelBtn.disabled=false;
+}
+
+showToast(
+error.message||
+"Unable to evaluate the interview."
+);
+
+}
+
+}
+
+answerInput?.addEventListener(
+"input",
+()=>{
+
+if(submitting||cancelling){
+return;
+}
+
+answers[currentIndex]=
+answerInput.value.trim();
+
+if(typeof questions[currentIndex]==="object"){
+questions[currentIndex].answer=
+answers[currentIndex];
+}
+
+updateAnsweredCount();
+renderDots();
+
+}
+);
+
+previousBtn?.addEventListener(
+"click",
+()=>{
+
+if(submitting||cancelling){
+return;
+}
+
+saveCurrentAnswer();
+
+if(currentIndex>0){
+
+currentIndex--;
+
+renderQuestion();
+
+}
+
+}
+);
+
+nextBtn?.addEventListener(
+"click",
+async()=>{
+
+if(submitting||cancelling){
+return;
+}
+
+const answer=
+answerInput?.value.trim()||"";
+
+if(!answer){
+
+showToast(
+"Please answer this question before continuing."
+);
+
+answerInput?.focus();
+
+return;
+}
+
+saveCurrentAnswer();
+
+if(currentIndex<questions.length-1){
+
+currentIndex++;
+
+renderQuestion();
+
+return;
+}
+
+await submitInterview();
+
+}
+);
+
+cancelBtn?.addEventListener(
+"click",
+cancelInterview
+);
+
+const menuLinks=
+document.querySelectorAll(
+".side-menu-nav a"
+);
 
 menuLinks.forEach(link=>{
-link.addEventListener("click",event=>{
+
+link.addEventListener(
+"click",
+event=>{
+
+if(submitting||cancelling){
+event.preventDefault();
+return;
+}
+
 event.preventDefault();
 
 createConfirmBox(
 "You are currently in an interview. Leaving now will cancel this interview.",
-()=>{
-sessionStorage.removeItem("current_interview");
-window.location.href=link.href;
+async()=>{
+
+if(cancelling){
+return;
+}
+
+cancelling=true;
+
+const userId=
+localStorage.getItem("user_id");
+
+if(!userId||!interviewId){
+
+showToast(
+"Interview information is missing. Please start a new interview."
+);
+
+cancelling=false;
+
+return;
+}
+
+try{
+
+const response=
+await fetch(
+`${API_BASE}/api/interview/cancel`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:userId,
+interview_id:interviewId
+})
 }
 );
-});
+
+const result=
+await response.json();
+
+if(!response.ok){
+
+throw new Error(
+result.error||
+"Unable to cancel the interview."
+);
+}
+
+sessionStorage.removeItem(
+"current_interview"
+);
+
+window.location.href=
+link.href;
+
+}catch(error){
+
+console.error(
+"Cancel interview error:",
+error
+);
+
+cancelling=false;
+
+showToast(
+error.message||
+"Unable to cancel the interview."
+);
+}
+}
+);
+
+}
+);
+
 });
 
 renderQuestion();
+
 });

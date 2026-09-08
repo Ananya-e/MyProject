@@ -6,7 +6,7 @@
 <title>Intervia | Practice Interview</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="css/practice.css">
-<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/menu.css"> 
 </head>
 <body>
 
@@ -20,19 +20,23 @@
 
 <nav class="side-menu-nav">
 <a href="dashboard.html">
-<i class="fa-regular fa-house"></i><span>Dashboard</span>
+<i class="fa-solid fa-house"></i>
+<span>Dashboard</span>
 </a>
-<a href="resume.html">
-<i class="fa-regular fa-file-lines"></i><span>Resume</span>
-</a>
+
 <a href="practice.html">
-<i class="fa-regular fa-message"></i><span>Practice Interview</span>
+<i class="fa-regular fa-message"></i>
+<span>Practice Interview</span>
 </a>
+
 <a href="interviews.html">
-<i class="fa-regular fa-rectangle-list"></i><span>My Interviews</span>
+<i class="fa-regular fa-rectangle-list"></i>
+<span>My Interviews</span>
 </a>
+
 <a href="progress.html">
-<i class="fa-regular fa-chart-line"></i><span>Progress</span>
+<i class="fa-solid fa-chart-line"></i>
+<span>Progress</span>
 </a>
 </nav>
 
@@ -50,6 +54,7 @@
 </div>
 </div>
 </div>
+
 <header class="topbar">
 <div class="topbar-left">
 <button class="menu-btn" id="menuBtn" aria-label="Open menu">
@@ -84,8 +89,15 @@
 <strong id="resumeName">Resume</strong>
 <span id="resumeState">Checking resume...</span>
 </div>
+
 <i class="fa-solid fa-chevron-right arrow"></i>
 </div>
+<input
+type="file"
+id="resumeFileInput"
+accept=".pdf,.docx"
+hidden
+>
 </section>
 
 <section class="content-grid">
@@ -148,15 +160,13 @@
 <option value="Lead Level">Lead Level</option>
 </select>
 </div>
-
 <div class="question-section">
-<label>Number of Questions</label>
+<label>Interview Length</label>
 
 <div class="question-options">
 <button data-count="5">5</button>
 <button data-count="10">10</button>
 <button class="selected" data-count="15">15 <i class="fa-solid fa-check"></i></button>
-<button data-count="20">20</button>
 </div>
 </div>
 
@@ -166,11 +176,17 @@
 <span>•</span>
 <span id="timeText">Estimated time: 30–40 minutes</span>
 </div>
-
+<div class="start-actions">
 <button class="start-btn" id="startInterviewBtn">
 <i class="fa-solid fa-play"></i>
 <span>Start Interview</span>
 </button>
+
+<button class="voice-start-btn" id="startVoiceInterviewBtn">
+<i class="fa-solid fa-microphone"></i>
+<span>Voice Interview</span>
+</button>
+</div>
 </div>
 </div>
 

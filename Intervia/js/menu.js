@@ -62,6 +62,6 @@ localStorage.removeItem("user_email");
 localStorage.removeItem("user_name");
 localStorage.removeItem("resume_analysis");
 sessionStorage.removeItem("current_interview");
-window.location.href="login.html";
+window.location.href="index.html";
 });
 });

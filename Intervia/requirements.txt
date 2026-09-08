@@ -3,3 +3,7 @@ Flask-CORS
 Werkzeug
 python-dotenv
 requests
+google-genai
+flask-sock
+websocket-client
+python-docx 

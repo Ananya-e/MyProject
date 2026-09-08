@@ -23,7 +23,7 @@ position:fixed;
 inset:0;
 background:rgba(13,20,42,.42);
 backdrop-filter:blur(2px);
-z-index:998;
+z-index:1098;
 opacity:0;
 visibility:hidden;
 transition:opacity .25s ease,visibility .25s ease;
@@ -41,7 +41,7 @@ top:0;
 width:268px;
 height:100vh;
 background:#fff;
-z-index:999;
+z-index:1099;
 padding:26px 18px 20px;
 box-shadow:8px 0 30px rgba(20,30,60,.13);
 transition:left .25s ease;
@@ -175,7 +175,7 @@ backdrop-filter:blur(3px);
 display:none;
 align-items:center;
 justify-content:center;
-z-index:1000;
+z-index:1100;
 padding:20px;
 }
 
