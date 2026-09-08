@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/progress.css">
+<link rel="stylesheet" href="css/toast.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/menu.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+<div class="side-menu-header">
+<img src="assets/intervia-logo.png" alt="Intervia" class="side-menu-logo">
+<button class="side-menu-close" id="menuClose" aria-label="Close menu">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+
+<nav class="side-menu-nav">
+<a href="dashboard.html">
+<i class="fa-regular fa-house"></i>
+<span>Dashboard</span>
+</a>
+<a href="resume.html">
+<i class="fa-regular fa-file-lines"></i>
+<span>Resume</span>
+</a>
+<a href="practice.html">
+<i class="fa-regular fa-message"></i>
+<span>Practice Interview</span>
+</a>
+<a href="interviews.html">
+<i class="fa-regular fa-rectangle-list"></i>
+<span>My Interviews</span>
+</a>
+<a href="progress.html">
+<i class="fa-regular fa-chart-line"></i>
+<span>Progress</span>
+</a>
+</nav>
+
+<button class="side-menu-logout" id="logoutBtn">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</button>
+</aside>
+
+<div class="logout-overlay" id="logoutOverlay">
+<div class="logout-box">
+<div class="logout-icon">
+<i class="fa-solid fa-exclamation"></i>
+</div>
+<h2>Are you sure?</h2>
+<p>Do you really want to logout from Intervia?</p>
+<div class="logout-actions">
+<button class="logout-cancel" id="cancelLogout">Cancel</button>
+<button class="logout-confirm" id="confirmLogout">Logout</button>
+</div>
+</div>
+</div>
+
+<div class="progress-page">
+
+<header class="topbar">
+<div class="topbar-left">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+<i class="fa-solid fa-bars"></i>
+</button>
+<img src="assets/intervia-logo.png" alt="Intervia" class="topbar-logo">
+</div>
+
+<div class="topbar-actions">
+<button type="button" class="profile-btn" id="profileBtn">
+<img id="profileImage" src="assets/profile-placeholder.png" alt="Profile">
+<div class="profile-info">
+<strong id="profileName">User</strong>
+<span>Candidate</span>
+</div>
+<i class="fa-solid fa-chevron-down profile-arrow"></i>
+</button>
+</div>
+</header>
+
+<main class="main-content">
+
+<section class="page-heading">
+<div>
+<span class="eyebrow">PERFORMANCE ANALYTICS</span>
+<h1>Your Interview Progress</h1>
+<p>Track your interview performance and see how your skills improve over time.</p>
+</div>
+
+<div class="range-box">
+<i class="fa-regular fa-calendar"></i>
+<select id="progressRange">
+<option value="6">Last 6 Interviews</option>
+<option value="10">Last 10 Interviews</option>
+<option value="all">All Interviews</option>
+</select>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+</section>
+
+<section class="stats-grid">
+
+<div class="stat-card">
+<div class="stat-icon purple">
+<i class="fa-solid fa-clipboard-check"></i>
+</div>
+<div>
+<span>Total Interviews</span>
+<strong id="totalInterviews">0</strong>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon green">
+<i class="fa-solid fa-chart-column"></i>
+</div>
+<div>
+<span>Average Score</span>
+<strong id="averageScore">0%</strong>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon orange">
+<i class="fa-solid fa-trophy"></i>
+</div>
+<div>
+<span>Best Score</span>
+<strong id="bestScore">0%</strong>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon pink">
+<i class="fa-solid fa-arrow-trend-up"></i>
+</div>
+<div>
+<span>Latest Score</span>
+<strong id="latestScore">0%</strong>
+</div>
+</div>
+
+</section>
+
+<section class="main-grid">
+
+<div class="panel trend-panel">
+
+<div class="panel-header">
+<div>
+<h2>Performance Trend</h2>
+<p>Your interview scores across completed interviews.</p>
+</div>
+
+<div class="trend-badge" id="trendBadge">
+<i class="fa-solid fa-minus"></i>
+<span>No change</span>
+</div>
+</div>
+
+<div class="chart-wrapper">
+<canvas id="progressChart"></canvas>
+
+<div class="chart-empty" id="chartEmpty">
+<div class="empty-icon">
+<i class="fa-solid fa-chart-line"></i>
+</div>
+<h3>No interview data yet</h3>
+<p>Complete an interview to start tracking your progress.</p>
+</div>
+</div>
+
+</div>
+
+<div class="panel overview-panel">
+
+<div class="panel-header">
+<div>
+<h2>Performance Overview</h2>
+<p>A quick look at your current progress.</p>
+</div>
+</div>
+
+<div class="overview-item">
+<div class="overview-icon purple">
+<i class="fa-solid fa-star"></i>
+</div>
+<div>
+<span>Current Performance</span>
+<strong id="performanceLevel">Getting Started</strong>
+</div>
+</div>
+
+<div class="overview-item">
+<div class="overview-icon green">
+<i class="fa-solid fa-arrow-up"></i>
+</div>
+<div>
+<span>Improvement</span>
+<strong id="improvementValue">0%</strong>
+</div>
+</div>
+
+<div class="overview-item">
+<div class="overview-icon blue">
+<i class="fa-solid fa-medal"></i>
+</div>
+<div>
+<span>Highest Rating</span>
+<strong id="highestRating">—</strong>
+</div>
+</div>
+
+<div class="overview-item">
+<div class="overview-icon pink">
+<i class="fa-solid fa-bullseye"></i>
+</div>
+<div>
+<span>Latest Interview</span>
+<strong id="latestInterviewType">—</strong>
+</div>
+</div>
+
+<div class="progress-message" id="progressMessage">
+Complete your first interview to start building your performance history.
+</div>
+
+</div>
+
+</section>
+
+
+</main>
+
+</div>
+
+<script src="js/menu.js"></script>
+<script src="js/progress.js"></script>
+
+</body>
+</html>
