@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | AI Voice Interview</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/voice-interview.css">
+<link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+<div class="side-menu-header">
+<img src="assets/intervia-logo.png" alt="Intervia" class="side-menu-logo">
+<button class="side-menu-close" id="menuClose" aria-label="Close menu">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+
+<nav class="side-menu-nav">
+<a href="dashboard.html">
+<i class="fa-solid fa-house"></i>
+<span>Dashboard</span>
+</a>
+
+<a href="practice.html">
+<i class="fa-regular fa-message"></i>
+<span>Practice Interview</span>
+</a>
+
+<a href="interviews.html">
+<i class="fa-regular fa-rectangle-list"></i>
+<span>My Interviews</span>
+</a>
+
+<a href="progress.html">
+<i class="fa-solid fa-chart-line"></i>
+<span>Progress</span>
+</a>
+</nav>
+
+<button class="side-menu-logout" id="logoutBtn">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</button>
+</aside>
+
+<header class="topbar">
+<div class="topbar-left">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+<i class="fa-solid fa-bars"></i>
+</button>
+
+<a href="dashboard.html" class="brand">
+<img src="assets/intervia-logo.png" alt="Intervia">
+</a>
+</div>
+
+<div class="topbar-center">
+<div class="interview-title">
+<span class="live-dot"></span>
+<span>AI Voice Interview</span>
+</div>
+</div>
+
+<div class="topbar-right">
+<div class="timer-box">
+<i class="fa-regular fa-clock"></i>
+<span id="interviewTimer">00:00</span>
+</div>
+
+<div class="profile">
+<div class="avatar" id="userAvatar">U</div>
+<div class="profile-text">
+<strong id="userName">Candidate</strong>
+<span>Candidate</span>
+</div>
+</div>
+</div>
+</header>
+
+<main class="voice-main">
+
+<section class="interview-header">
+<div>
+<span class="eyebrow">LIVE INTERVIEW</span>
+<h1>AI Voice Interview</h1>
+<p id="interviewDescription">Your personalized voice interview is in progress.</p>
+</div>
+
+<div class="interview-meta">
+
+<div class="meta-item">
+<i class="fa-solid fa-briefcase"></i>
+<div>
+<span>Target Role</span>
+<strong id="targetRole">-</strong>
+</div>
+</div>
+
+<div class="meta-item">
+<i class="fa-solid fa-layer-group"></i>
+<div>
+<span>Interview Type</span>
+<strong id="interviewType">-</strong>
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="voice-layout">
+
+<div class="interviewer-card">
+
+<div class="card-header">
+<div>
+<h2>AI Interviewer</h2>
+<p id="connectionStatus">Connecting...</p>
+</div>
+
+<div class="connection-indicator" id="connectionIndicator">
+<span></span>
+</div>
+</div>
+
+<div class="ai-stage">
+
+<div class="ai-orbit orbit-one"></div>
+<div class="ai-orbit orbit-two"></div>
+
+<div class="ai-avatar" id="aiAvatar">
+<div class="ai-avatar-inner">
+<i class="fa-solid fa-microchip"></i>
+</div>
+</div>
+
+<div class="voice-wave" id="voiceWave">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+<div class="ai-status" id="aiStatus">
+Connecting to your AI interviewer...
+</div>
+
+</div>
+
+<div class="question-panel">
+<div class="question-label">
+<span>LIVE INTERVIEW</span>
+<span>Voice Mode</span>
+</div>
+
+<p id="currentQuestion">
+Speak naturally. Your AI interviewer will ask questions and follow up based on your responses.
+</p>
+</div>
+
+</div>
+
+<aside class="control-column">
+
+<div class="candidate-card">
+
+<div class="candidate-heading">
+<div class="candidate-icon">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<div>
+<h2>Your Response</h2>
+<p id="candidateStatus">Waiting for the interviewer</p>
+</div>
+</div>
+
+<div class="mic-area">
+
+<div class="mic-ring">
+<button
+class="mic-btn"
+id="micBtn"
+type="button"
+aria-label="Microphone"
+>
+<i class="fa-solid fa-microphone"></i>
+</button>
+</div>
+
+<div class="mic-status" id="micStatus">
+Microphone ready
+</div>
+
+<div class="mic-hint" id="micHint">
+Your microphone will be used for the live voice interview.
+</div>
+
+</div>
+
+<div class="audio-level">
+
+<div class="audio-level-header">
+<span>Voice Activity</span>
+<span id="audioLevelText">Ready</span>
+</div>
+
+<div class="audio-bars" id="audioBars">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+
+</div>
+
+</div>
+
+<div class="progress-card">
+
+<div class="progress-heading">
+<span>Time Remaining</span>
+<strong id="progressText">05:00</strong>
+</div>
+
+<div class="progress-track">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+<p id="progressHint">
+Your AI interview will automatically finish when the selected time ends.
+</p>
+
+</div>
+<button
+class="end-btn"
+id="endInterviewBtn"
+type="button"
+>
+<i class="fa-solid fa-phone-slash"></i>
+<span>End Interview</span>
+</button>
+
+</aside>
+
+</section>
+
+<div class="bottom-notice">
+<i class="fa-solid fa-shield-halved"></i>
+<span>
+Your voice interview will be evaluated for answer quality,
+communication, fluency, and interview confidence.
+</span>
+</div>
+
+</main>
+
+<div class="end-overlay" id="endOverlay">
+
+<div class="end-modal">
+
+<div class="end-modal-icon">
+<i class="fa-solid fa-phone-slash"></i>
+</div>
+
+<h2>End Interview?</h2>
+
+<p>
+Are you sure you want to end the interview?
+Your completed responses will be evaluated and your results will be generated.
+</p>
+
+<div class="end-actions">
+
+<button
+class="cancel-end-btn"
+id="cancelEndBtn"
+type="button"
+>
+Continue Interview
+</button>
+
+<button
+class="confirm-end-btn"
+id="confirmEndBtn"
+type="button"
+>
+End Interview
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/voice-interview.js"></script>
+<script src="js/menu.js"></script>
+
+</body>
+</html>

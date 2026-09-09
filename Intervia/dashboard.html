@@ -9,50 +9,100 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/toast.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="css/menu.css">
 </head>
 <body>
-<div class="dashboard">
-<aside class="sidebar">
-<a href="index.html" class="sidebar-logo"><img src="assets/intervia-logo.png" alt="Intervia"></a>
-<nav class="sidebar-nav">
-<a href="dashboard.html" class="sidebar-link active"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10.5V20h14v-9.5"></path><path d="M9 20v-6h6v6"></path></svg><span>Dashboard</span></a>
-<a href="practice.html" class="sidebar-link"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M8 19v2M16 19v2M8 10h.01M16 10h.01"></path></svg><span>Practice Interview</span></a>
-<a href="interviews.html" class="sidebar-link"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>My Interviews</span></a>
-<a href="#" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-6"></path></svg><span>Progress</span></a>
-<a href="#" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"></path><path d="m4 7 6-3 6 2 6-4"></path></svg><span>Reports & Analytics</span></a>
-<a href="resume.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"></path><path d="M15 3v5h4M9 12h6M9 16h6"></path></svg><span>Resume</span></a>
-<a href="question-bank.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Question Bank</span></a>
-<a href="mock-tests.html" class="sidebar-link"><svg viewBox="0 0 24 24"><path d="M4 6h16v13H4z"></path><path d="M8 6V4h8v2M8 11h8M8 15h5"></path></svg><span>Mock Tests</span></a>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+<div class="side-menu-header">
+<img src="assets/intervia-logo.png" alt="Intervia" class="side-menu-logo">
+<button class="side-menu-close" id="menuClose" aria-label="Close menu">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+
+<nav class="side-menu-nav">
+<a href="dashboard.html" class="active">
+<i class="fa-solid fa-house"></i>
+<span>Dashboard</span>
+</a>
+
+<a href="practice.html">
+<i class="fa-regular fa-message"></i>
+<span>Practice Interview</span>
+</a>
+
+<a href="interviews.html">
+<i class="fa-regular fa-rectangle-list"></i>
+<span>My Interviews</span>
+</a>
+
+<a href="progress.html">
+<i class="fa-solid fa-chart-line"></i>
+<span>Progress</span>
+</a>
 </nav>
-<div class="premium-card">
-<div class="premium-title"><svg viewBox="0 0 24 24"><path d="m12 3 2.2 4.7L19 9l-3.5 3.4.8 4.9-4.3-2.3-4.3 2.3.8-4.9L5 9l4.8-1.3L12 3Z"></path></svg><span>Go Premium</span></div>
-<p>Unlock unlimited interviews, advanced analytics and personalized insights.</p>
-<button type="button">Upgrade Now</button>
-</div>
-<a href="login.html" class="logout-link" id="logoutBtn"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M14 4h5v16h-5"></path></svg><span>Logout</span></a>
+
+<button class="side-menu-logout" id="logoutBtn">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</button>
 </aside>
-<main class="main-content">
-<header class="topbar">
-<div class="search-box">
-<input type="text" id="dashboardSearch" placeholder="Search anything...">
-<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+
+<div class="logout-overlay" id="logoutOverlay">
+<div class="logout-box">
+<div class="logout-icon">
+<i class="fa-solid fa-exclamation"></i>
 </div>
+<h2>Are you sure?</h2>
+<p>Do you really want to logout from Intervia?</p>
+<div class="logout-actions">
+<button class="logout-cancel" id="cancelLogout">Cancel</button>
+<button class="logout-confirm" id="confirmLogout">Logout</button>
+</div>
+</div>
+</div>
+
+<div class="dashboard">
+<main class="main-content">
+
+<header class="topbar">
+<div class="topbar-left">
+<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+<i class="fa-solid fa-bars"></i>
+</button>
+<img src="assets/intervia-logo.png" alt="Intervia" class="topbar-logo">
+</div>
+
 <div class="topbar-actions">
 <button type="button" class="profile-btn" id="profileBtn">
 <img id="profileImage" src="assets/profile-placeholder.png" alt="Profile">
+<div class="profile-info">
 <strong id="profileName">User</strong>
-<svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"></path></svg>
+<span>Candidate</span>
+</div>
 </button>
 </div>
 </header>
+
 <div class="content">
+
 <section class="welcome-banner">
 <div class="welcome-text">
-<h1>Welcome back, <span id="welcomeName">User</span>!</h1>
-<p>Ready to improve your interview performance today?</p>
-<a href="#" class="primary-btn" id="startInterviewBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>Start New Interview</a>
+<span class="welcome-label">WELCOME BACK</span>
+<h1>Hi, <span id="welcomeName">User</span>!</h1>
+<p>Your AI interview coach is ready to help you build confidence and improve your interview performance.</p>
+<a href="practice.html" class="primary-btn" id="startInterviewBtn">
+<i class="fa-solid fa-play"></i>
+Start New Interview
+</a>
 </div>
+
 <div class="welcome-visual">
+
 <div class="robot-character">
 <div class="robot-antenna"></div>
 <div class="robot-head">
@@ -62,109 +112,613 @@
 <div class="robot-mouth"></div>
 </div>
 </div>
+
 <div class="robot-neck"></div>
+
 <div class="robot-body">
 <div class="robot-tie"></div>
 <div class="robot-panel"></div>
 </div>
+
 <div class="robot-arm robot-arm-left">
 <div class="robot-hand"></div>
 </div>
+
 <div class="robot-arm robot-arm-right">
 <div class="robot-hand"></div>
 </div>
 </div>
-<div class="visual-bubble">
-<span></span>
-<span></span>
-<span></span>
+
+<div class="visual-card visual-card-one">
+<i class="fa-regular fa-file-lines"></i>
+<span>Personalized<br>Practice</span>
 </div>
-<div class="visual-chart">
-<i></i>
-<i></i>
-<i></i>
+
+<div class="visual-card visual-card-two">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+<span>AI<br>Feedback</span>
 </div>
+
+<div class="visual-card visual-card-three">
+<i class="fa-solid fa-bullseye"></i>
+<span>Improve<br>Faster</span>
+</div>
+
+<div class="visual-quote">
+<i class="fa-solid fa-quote-left"></i>
+<p>Practice today<br>for a stronger<br>tomorrow.</p>
+</div>
+
 </div>
 </section>
-<section class="top-cards">
-<div class="info-card resume-card">
-<div class="card-icon blue-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"></path><path d="M15 3v5h4M9 12h6M9 16h6"></path></svg></div>
-<div class="card-main">
-<h3>Your Resume</h3>
-<div class="status-check" id="resumeStatus">✓</div>
-<strong id="resumeName">No resume uploaded</strong>
-<p id="resumeDate">Upload your resume to get started</p>
-<button type="button" class="outline-btn" id="resumeBtn">View / Update</button>
+
+<section class="main-grid">
+
+<div class="panel resume-panel">
+
+<div class="section-heading">
+<div class="heading-icon resume-icon">
+<i class="fa-regular fa-file-lines"></i>
+</div>
+
+<div>
+<h2>Your Resume</h2>
+<p>Your resume powers your personalized interviews.</p>
 </div>
 </div>
-<div class="info-card role-card">
-<div class="card-icon cyan-icon"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="2"></rect><path d="M9 7V5h6v2M8 12h8M12 10v4"></path></svg></div>
-<div class="card-main">
-<h3>Target Role</h3>
-<div class="status-check" id="roleStatus">✓</div>
-<strong id="targetRole">Not selected</strong>
-<p>Change role or preferences</p>
-<button type="button" class="outline-btn" id="roleBtn">Update Role</button>
+
+<div id="resumeEmptyState" class="resume-empty-state">
+
+<div class="resume-empty-icon">
+<i class="fa-solid fa-cloud-arrow-up"></i>
+</div>
+
+<strong>No resume uploaded</strong>
+
+<p>
+Upload your resume so Intervia can personalize your interview questions.
+</p>
+
+<button type="button" class="resume-main-btn" id="uploadResumeBtn">
+<i class="fa-solid fa-arrow-up-from-bracket"></i>
+Upload Resume
+</button>
+
+</div>
+
+<div id="resumeLoadedState" class="resume-loaded-state" hidden>
+
+<div class="resume-content">
+
+<div class="resume-file-icon">
+<i class="fa-regular fa-file-lines"></i>
+</div>
+
+<div class="resume-details">
+
+<div class="resume-title-row">
+<strong id="resumeName">Resume</strong>
+<span class="status-badge" id="resumeStatus">
+<i class="fa-solid fa-circle-check"></i>
+Analyzed
+</span>
+</div>
+
+<p id="resumeDate">Uploaded recently</p>
+
 </div>
 </div>
-<div class="info-card readiness-card">
-<div class="readiness-header">
-<h3>Interview Readiness</h3>
-<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 10v5M12 7h.01"></path></svg>
+
+<div class="resume-actions">
+
+<button type="button" class="secondary-btn" id="resumeBtn">
+<i class="fa-regular fa-eye"></i>
+View Resume
+</button>
+
+<button type="button" class="outline-btn" id="uploadNewBtn">
+<i class="fa-solid fa-arrow-up-from-bracket"></i>
+Upload New
+</button>
+
+<button type="button" class="outline-btn" id="viewAnalysisBtn">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+View Analysis
+</button>
+
+<button type="button" class="danger-outline-btn" id="removeResumeBtn">
+<i class="fa-regular fa-trash-can"></i>
+Remove
+</button>
+
 </div>
-<div class="readiness-body">
-<div class="readiness-circle"><strong id="overallReadiness">0%</strong><span>Overall Readiness</span></div>
+
+</div>
+
+</div>
+
+<div class="panel readiness-panel">
+
+<div class="section-heading readiness-heading">
+<div class="heading-icon readiness-icon">
+<i class="fa-solid fa-chart-simple"></i>
+</div>
+
+<div>
+<h2>Interview Readiness</h2>
+<p>Based on your latest interview performance.</p>
+</div>
+
+<span class="readiness-status">
+<i class="fa-solid fa-circle-check"></i>
+You're on track
+</span>
+</div>
+
+<div class="readiness-content">
+
+<div class="readiness-score">
+<div class="readiness-circle">
+<div class="circle-inner">
+<strong id="overallReadiness">0%</strong>
+<span>Overall</span>
+</div>
+</div>
+</div>
+
 <div class="skill-list">
-<div class="skill-row"><span class="skill-label purple">Communication</span><div class="skill-bar"><i id="communicationBar"></i></div><strong id="communicationScore">0%</strong></div>
-<div class="skill-row"><span class="skill-label blue">Confidence</span><div class="skill-bar"><i id="confidenceBar"></i></div><strong id="confidenceScore">0%</strong></div>
-<div class="skill-row"><span class="skill-label green">Technical Skills</span><div class="skill-bar"><i id="technicalBar"></i></div><strong id="technicalScore">0%</strong></div>
-<div class="skill-row"><span class="skill-label orange">Answer Structure</span><div class="skill-bar"><i id="structureBar"></i></div><strong id="structureScore">0%</strong></div>
+
+<div class="skill-row">
+<div class="skill-name">
+<span class="skill-icon purple">
+<i class="fa-regular fa-comments"></i>
+</span>
+<span>Communication</span>
+</div>
+
+<div class="skill-bar">
+<i id="communicationBar"></i>
+</div>
+
+<strong id="communicationScore">0%</strong>
+</div>
+
+<div class="skill-row">
+<div class="skill-name">
+<span class="skill-icon blue">
+<i class="fa-regular fa-user"></i>
+</span>
+<span>Confidence</span>
+</div>
+
+<div class="skill-bar">
+<i id="confidenceBar"></i>
+</div>
+
+<strong id="confidenceScore">0%</strong>
+</div>
+
+<div class="skill-row">
+<div class="skill-name">
+<span class="skill-icon green">
+<i class="fa-solid fa-code"></i>
+</span>
+<span>Technical Skills</span>
+</div>
+
+<div class="skill-bar">
+<i id="technicalBar"></i>
+</div>
+
+<strong id="technicalScore">0%</strong>
+</div>
+
+<div class="skill-row">
+<div class="skill-name">
+<span class="skill-icon orange">
+<i class="fa-regular fa-file-lines"></i>
+</span>
+<span>Answer Structure</span>
+</div>
+
+<div class="skill-bar">
+<i id="structureBar"></i>
+</div>
+
+<strong id="structureScore">0%</strong>
+</div>
+
 </div>
 </div>
 </div>
+
 </section>
-<section class="middle-grid">
+
+<section class="lower-grid">
+
 <div class="panel recent-panel">
-<div class="panel-heading"><h2>Recent Interview</h2><span id="recentInterviewDate">No interviews</span></div>
-<div class="recent-content">
-<div class="score-circle"><strong id="recentScore">0%</strong><span>Overall Score</span></div>
+
+<div class="panel-heading">
+<div>
+<h2>Recent Interview</h2>
+<p>Your latest completed interview at a glance.</p>
+</div>
+
+<span class="date-badge" id="recentInterviewDate">
+No interviews
+</span>
+</div>
+
+<div class="recent-layout">
+
+<div class="recent-score">
+<div class="score-circle">
+<strong id="recentScore">0%</strong>
+<span>Overall Score</span>
+</div>
+</div>
+
 <div class="recent-details">
-<div><span>Interview Type</span><strong id="recentType">—</strong></div>
-<div><span>Duration</span><strong id="recentDuration">—</strong></div>
-<div><span>Questions Asked</span><strong id="recentQuestions">—</strong></div>
-<div><span>Your Rating</span><strong class="stars" id="recentRating">—</strong></div>
-<a href="#" class="analysis-btn" id="analysisBtn">View Detailed Analysis <span>→</span></a>
+
+<div class="detail-row">
+<span>Interview Type</span>
+<strong id="recentType">—</strong>
+</div>
+
+<div class="detail-row">
+<span>Duration</span>
+<strong id="recentDuration">—</strong>
+</div>
+
+<div class="detail-row">
+<span>Questions Asked</span>
+<strong id="recentQuestions">—</strong>
+</div>
+
+<div class="detail-row">
+<span>Your Rating</span>
+<strong class="stars" id="recentRating">—</strong>
+</div>
+
+<a href="interviews.html" class="analysis-btn" id="analysisBtn">
+<span>View My Interviews</span>
+</a>
+
 </div>
 </div>
+
 </div>
-<div class="panel progress-panel">
-<div class="panel-heading"><h2>Your Progress</h2><select id="progressRange"><option value="6">Last 6 Interviews</option><option value="10">Last 10 Interviews</option></select></div>
-<div class="chart-area">
-<div class="y-labels"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
-<div class="chart" id="progressChart"></div>
-</div>
-</div>
-</section>
-<section class="bottom-grid">
+
 <div class="panel focus-panel">
-<div class="panel-heading"><h2>Focus Areas to Improve</h2></div>
+
+<div class="panel-heading">
+<div>
+<h2>Focus Areas to Improve</h2>
+<p>Personalized suggestions based on your latest performance.</p>
+</div>
+
+<span class="ai-badge">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+AI Insights
+</span>
+</div>
+
 <div id="focusAreas"></div>
+
 </div>
-<div class="panel quick-panel">
-<div class="panel-heading"><h2>Quick Actions</h2></div>
-<div class="quick-grid">
-<a href="#" class="quick-card" id="quickStart"><div class="quick-icon purple-bg"><svg viewBox="0 0 24 24"><path d="M5 7h10a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H9l-4 3v-3a3 3 0 0 1-3-3v-5a3 3 0 0 1 3-3Z"></path></svg></div><strong>Start Interview</strong><span>Practice now</span></a>
-<a href="#" class="quick-card" id="quickResume"><div class="quick-icon blue-bg"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg></div><strong>Upload Resume</strong><span>Update your resume</span></a>
-<a href="#" class="quick-card" id="quickProgress"><div class="quick-icon green-bg"><svg viewBox="0 0 24 24"><path d="M5 19V9M12 19V5M19 19v-7"></path><path d="m4 7 5-3 5 2 6-4"></path></svg></div><strong>View Progress</strong><span>Track your growth</span></a>
-<a href="#" class="quick-card" id="quickPrevious"><div class="quick-icon orange-bg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg></div><strong>Previous Interviews</strong><span>Review past sessions</span></a>
-</div>
-</div>
+
 </section>
+
 </div>
 </main>
 </div>
+
+<div class="resume-modal-backdrop" id="resumeUploadModal" hidden>
+
+<div class="resume-modal upload-modal">
+
+<button type="button" class="resume-modal-close" id="closeUploadModal">
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+<div class="modal-top-icon upload-modal-icon">
+<i class="fa-solid fa-arrow-up-from-bracket"></i>
+</div>
+
+<span class="modal-label">RESUME PROFILE</span>
+
+<h2 id="uploadModalTitle">Upload your resume</h2>
+
+<p id="uploadModalText">
+Upload your latest resume and let Intervia analyze your professional background.
+</p>
+
+<div class="resume-drop-zone" id="resumeDropZone">
+
+<div class="drop-icon">
+<i class="fa-regular fa-file-lines"></i>
+</div>
+
+<strong>Choose your resume</strong>
+
+<span>PDF or DOCX · Maximum 10 MB</span>
+
+<label for="resumeFileInput" class="modal-upload-btn">
+Choose File
+</label>
+
+<input type="file" id="resumeFileInput" accept=".pdf,.docx" hidden>
+
+<div id="selectedFileName" class="selected-file-name"></div>
+
+</div>
+
+<div id="uploadProgressState" class="upload-progress-state" hidden>
+
+<div class="modal-loader"></div>
+
+<strong>Analyzing your resume</strong>
+
+<p>
+Intervia is extracting your skills, experience, education and professional profile.
+</p>
+
+<div class="modal-progress-track">
+<div class="modal-progress-fill"></div>
+</div>
+
+<span>AI analysis in progress...</span>
+
+</div>
+
+<div class="modal-actions" id="uploadModalActions">
+
+<button type="button" class="modal-cancel-btn" id="cancelUpload">
+Cancel
+</button>
+
+<button type="button" class="modal-primary-btn" id="startResumeAnalysis" disabled>
+Analyze Resume
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="resume-modal-backdrop" id="resumeAnalysisModal" hidden>
+
+<div class="resume-modal analysis-modal">
+
+<button type="button" class="resume-modal-close" id="closeAnalysisModal">
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+<div class="analysis-modal-header">
+
+<div class="modal-top-icon analysis-modal-icon">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+</div>
+
+<div>
+<span class="modal-label">AI RESUME ANALYSIS</span>
+<h2>Your professional profile</h2>
+<p>Intervia's analysis of your uploaded resume.</p>
+</div>
+
+</div>
+
+<div class="analysis-modal-body">
+
+<section class="analysis-profile-card">
+
+<div class="analysis-avatar" id="analysisCandidateInitial">
+U
+</div>
+
+<div class="analysis-identity">
+<span>CANDIDATE</span>
+<strong id="analysisCandidateName">—</strong>
+<p id="analysisCandidateLocation">—</p>
+</div>
+
+<div class="analysis-level">
+<span>EXPERIENCE LEVEL</span>
+<strong id="analysisExperienceLevel">—</strong>
+</div>
+
+</section>
+
+<section class="analysis-summary-card">
+
+<div class="analysis-card-heading">
+<div>
+<span>PROFESSIONAL SUMMARY</span>
+<h3>Profile Overview</h3>
+</div>
+<i class="fa-solid fa-sparkles"></i>
+</div>
+
+<p id="analysisSummary">—</p>
+
+</section>
+
+<div class="analysis-columns">
+
+<section class="analysis-data-card">
+
+<div class="analysis-card-heading">
+<div>
+<span>SKILLS</span>
+<h3>Technical Strengths</h3>
+</div>
+<i class="fa-solid fa-code"></i>
+</div>
+
+<div class="analysis-tags" id="analysisSkills"></div>
+
+</section>
+
+<section class="analysis-data-card">
+
+<div class="analysis-card-heading">
+<div>
+<span>EXPERIENCE</span>
+<h3>Work Experience</h3>
+</div>
+<i class="fa-regular fa-briefcase"></i>
+</div>
+
+<div id="analysisExperience" class="analysis-list"></div>
+
+</section>
+
+<section class="analysis-data-card">
+
+<div class="analysis-card-heading">
+<div>
+<span>EDUCATION</span>
+<h3>Academic Background</h3>
+</div>
+<i class="fa-solid fa-graduation-cap"></i>
+</div>
+
+<div id="analysisEducation" class="analysis-list"></div>
+
+</section>
+
+<section class="analysis-data-card">
+
+<div class="analysis-card-heading">
+<div>
+<span>PROJECTS</span>
+<h3>Projects</h3>
+</div>
+<i class="fa-solid fa-diagram-project"></i>
+</div>
+
+<div id="analysisProjects" class="analysis-list"></div>
+
+</section>
+
+<section class="analysis-data-card full-width-analysis-card">
+
+<div class="analysis-card-heading">
+<div>
+<span>ADDITIONAL INFORMATION</span>
+<h3>Certifications & Languages</h3>
+</div>
+<i class="fa-regular fa-circle-check"></i>
+</div>
+
+<div class="analysis-additional-grid">
+
+<div>
+<strong>Certifications</strong>
+<div id="analysisCertifications" class="analysis-mini-list"></div>
+</div>
+
+<div>
+<strong>Languages</strong>
+<div id="analysisLanguages" class="analysis-mini-list"></div>
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+</div>
+
+<div class="analysis-modal-footer">
+
+<button type="button" class="modal-cancel-btn" id="closeAnalysisBottom">
+Close
+</button>
+
+<a href="practice.html" class="modal-primary-btn">
+Start Interview
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="resume-modal-backdrop" id="resumePreviewModal" hidden>
+
+<div class="resume-modal preview-modal">
+
+<div class="preview-modal-header">
+
+<div>
+<span class="modal-label">RESUME PREVIEW</span>
+<h2 id="previewResumeName">Resume</h2>
+</div>
+
+<button type="button" class="resume-modal-close" id="closePreviewModal">
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+</div>
+
+<div class="preview-frame-wrap">
+<iframe id="resumePreviewFrame" title="Resume Preview"></iframe>
+</div>
+
+<div class="preview-modal-footer">
+<button type="button" class="modal-cancel-btn" id="closePreviewBottom">
+Close
+</button>
+</div>
+
+</div>
+
+</div>
+
+<div class="resume-modal-backdrop" id="removeResumeModal" hidden>
+
+<div class="resume-modal remove-modal">
+
+<button type="button" class="resume-modal-close" id="closeRemoveModal">
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+<div class="modal-top-icon remove-modal-icon">
+<i class="fa-solid fa-trash-can"></i>
+</div>
+
+<span class="modal-label">REMOVE RESUME</span>
+
+<h2>Remove your resume?</h2>
+
+<p>
+Your uploaded resume and saved AI analysis will be removed from Intervia. You can upload another resume whenever you're ready.
+</p>
+
+<div class="modal-actions">
+
+<button type="button" class="modal-cancel-btn" id="cancelRemove">
+Cancel
+</button>
+
+<button type="button" class="modal-danger-btn" id="confirmRemove">
+Remove Resume
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 <script src="js/config.js"></script>
 <script src="js/toast.js"></script>
-<script src="js/dashboard.js"></script>
+<script src="js/dashboard.js?v=501"></script>
+<script src="js/menu.js"></script>
+
 </body>
 </html>

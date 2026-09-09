@@ -16,3 +16,21 @@ menuBtn.addEventListener("click", () => {
   nav.style.borderRadius = open ? "14px" : "";
   nav.style.boxShadow = open ? "0 15px 35px rgba(20,40,90,.12)" : "";
 });
+const demoCover=document.getElementById("demoCover");
+const demoVideo=document.getElementById("demoVideo");
+
+if(demoCover&&demoVideo){
+demoCover.addEventListener("click",()=>{
+demoCover.style.display="none";
+demoVideo.classList.add("active");
+demoVideo.currentTime=0;
+demoVideo.play();
+});
+
+demoVideo.addEventListener("ended",()=>{
+demoVideo.pause();
+demoVideo.currentTime=0;
+demoVideo.classList.remove("active");
+demoCover.style.display="block";
+});
+}
