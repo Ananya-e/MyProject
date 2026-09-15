@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Intervia | Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/toast.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="admin-page">
+
+<header class="admin-topbar">
+<div class="admin-brand">
+<a href="index.html">
+<img src="assets/intervia-logo.png" alt="Intervia">
+</a>
+</div>
+
+<div class="admin-actions">
+<div class="admin-profile">
+<div class="admin-avatar">A</div>
+<div class="admin-profile-text">
+<strong>Admin</strong>
+<span>Administrator</span>
+</div>
+</div>
+
+<button class="logout-btn" id="logoutBtn">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</button>
+</div>
+</header>
+
+<main class="admin-content">
+
+<section class="admin-heading">
+<div>
+<span class="eyebrow">ADMIN DASHBOARD</span>
+<h1>Platform Overview</h1>
+<p>Monitor users, interviews and overall platform activity.</p>
+</div>
+
+<div class="date-filter">
+<i class="fa-regular fa-calendar"></i>
+<select id="dateRange">
+<option value="30">Last 30 Days</option>
+<option value="7">Last 7 Days</option>
+<option value="90">Last 90 Days</option>
+<option value="all">All Time</option>
+</select>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+</section>
+
+<section class="overview-grid">
+
+<div class="overview-card">
+<div class="overview-icon purple">
+<i class="fa-solid fa-users"></i>
+</div>
+<div class="overview-info">
+<span>Total Users</span>
+<strong id="totalUsers">0</strong>
+
+</div>
+</div>
+
+<div class="overview-card">
+<div class="overview-icon green">
+<i class="fa-solid fa-chart-column"></i>
+</div>
+<div class="overview-info">
+<span>Total Interviews</span>
+<strong id="totalInterviews">0</strong>
+</div>
+</div>
+
+<div class="overview-card">
+<div class="overview-icon orange">
+<i class="fa-solid fa-circle-check"></i>
+</div>
+<div class="overview-info">
+<span>Completed Interviews</span>
+<strong id="completedInterviews">0</strong>
+
+</div>
+</div>
+
+<div class="overview-card">
+<div class="overview-icon pink">
+<i class="fa-solid fa-arrow-trend-up"></i>
+</div>
+<div class="overview-info">
+<span>Average Score</span>
+<strong id="averageScore">0%</strong>
+
+</div>
+</div>
+
+</section>
+
+<section class="users-panel">
+
+<div class="users-header">
+<h2>Users <span id="userCount">(0)</span></h2>
+</div>
+
+<div class="users-toolbar">
+
+<div class="search-box">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input
+type="text"
+id="userSearch"
+placeholder="Search users by name or email..."
+autocomplete="off"
+>
+</div>
+
+<div class="sort-box">
+<span>Sort by:</span>
+<select id="userSort">
+<option value="recent">Recent</option>
+<option value="oldest">Oldest</option>
+<option value="interviews">Most Interviews</option>
+<option value="score">Highest Score</option>
+<option value="name">Name</option>
+</select>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+
+</div>
+
+<div class="users-table-wrapper">
+
+<table class="users-table">
+
+<thead>
+<tr>
+<th>#</th>
+<th>Name</th>
+<th>Email</th>
+<th>Joined On</th>
+<th>Total Interviews</th>
+<th>Completed</th>
+<th>Avg Score</th>
+<th>Last Active</th>
+</tr>
+</thead>
+
+<tbody id="usersTableBody"></tbody>
+
+</table>
+
+</div>
+
+<div class="empty-users" id="emptyUsers">
+<div class="empty-users-icon">
+<i class="fa-solid fa-users"></i>
+</div>
+<h3>No users found</h3>
+<p>Try changing your search.</p>
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<div class="login-overlay" id="loginOverlay">
+
+<div class="login-modal">
+
+<div class="login-logo">
+<img src="assets/intervia-logo.png" alt="Intervia">
+</div>
+
+<div class="login-title">
+<span>ADMIN ACCESS</span>
+<h2>Admin Login</h2>
+<p>Sign in to access the Intervia administration dashboard.</p>
+</div>
+
+<form id="adminLoginForm">
+
+<div class="input-group">
+<label for="adminEmail">Email</label>
+<div class="input-wrapper">
+<i class="fa-regular fa-envelope"></i>
+<input
+type="email"
+id="adminEmail"
+placeholder="Enter admin email"
+required
+autocomplete="username"
+>
+</div>
+</div>
+
+<div class="input-group">
+<label for="adminPassword">Password</label>
+<div class="input-wrapper">
+<i class="fa-solid fa-lock"></i>
+<input
+type="password"
+id="adminPassword"
+placeholder="Enter admin password"
+required
+autocomplete="current-password"
+>
+<button type="button" class="password-toggle" id="passwordToggle">
+<i class="fa-regular fa-eye"></i>
+</button>
+</div>
+</div>
+
+<button type="submit" class="login-submit" id="loginSubmit">
+<span>Login</span>
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script src="js/toast.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>

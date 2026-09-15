@@ -29,17 +29,17 @@ return;
 }
 
 const name=user.full_name||user.name||"Candidate";
-const profileImage=user.profile_image||"assets/profile-placeholder.png";
+
 
 const profileName=document.getElementById("profileName");
-const profileImageElement=document.getElementById("profileImage");
+const profileAvatar=document.getElementById("profileAvatar");
 
 if(profileName){
 profileName.textContent=name;
 }
 
-if(profileImageElement){
-profileImageElement.src=profileImage;
+if(profileAvatar){
+profileAvatar.textContent=name.charAt(0).toUpperCase();
 }
 }
 
@@ -373,10 +373,4 @@ return number.toString();
 }
 
 return number.toFixed(1);
-}
-
-function showToast(message,type="info"){
-if(typeof window.showToast==="function"){
-window.showToast(message,type);
-}
 }

@@ -84,8 +84,10 @@ this.currentUser=user;
 this.text("profileName",user.full_name||"Candidate");
 this.text("welcomeName",user.full_name||"Candidate");
 
-if(user.profile_image){
-this.attr("profileImage","src",user.profile_image);
+const profileAvatar=document.getElementById("profileAvatar");
+
+if(profileAvatar){
+profileAvatar.textContent=(user.full_name||"Candidate").charAt(0).toUpperCase();
 }
 
 this.renderResume(data.resume);

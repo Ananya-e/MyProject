@@ -18,6 +18,7 @@ import threading
 import websocket
 from flask_sock import Sock
 from datetime import datetime, timezone
+from flask import session
 
 load_dotenv()
 
@@ -25,8 +26,12 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
 sock = Sock(app)
-CORS(app)
+CORS(
+    app,
+    supports_credentials=True
+)
 
 # IMPORTANT: this directory must live OUTSIDE app.root_path.
 # Flask's debug-mode reloader (Werkzeug) watches the project directory
@@ -798,7 +803,377 @@ def login():
     except Exception as e:
         return jsonify({"success": False, "message": "Server error."}), 500
 
+@app.route("/api/admin/login", methods=["POST"])
+def admin_login():
+    try:
+        data = request.get_json() or {}
 
+        email = (data.get("email") or "").strip().lower()
+        password = data.get("password") or ""
+
+        if not email or not password:
+            return jsonify({
+                "success": False,
+                "error": "Email and password are required."
+            }), 400
+
+        query = """
+        query AdminLogin($email: String!) {
+            admin_users(
+                where: {
+                    email: {_eq: $email},
+                    is_active: {_eq: true}
+                },
+                limit: 1
+            ) {
+                id
+                email
+                password_hash
+                role
+            }
+        }
+        """
+
+        response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": query,
+                "variables": {
+                    "email": email
+                }
+            }
+        )
+
+        result = response.json()
+
+        if "errors" in result:
+            print("Admin login Hasura error:", result["errors"])
+            return jsonify({
+                "success": False,
+                "error": "Unable to verify admin account."
+            }), 500
+
+        admins = result["data"].get("admin_users") or []
+
+        if not admins:
+            return jsonify({
+                "success": False,
+                "error": "Invalid admin credentials."
+            }), 401
+
+        admin = admins[0]
+
+        if not check_password_hash(
+            admin["password_hash"],
+            password
+        ):
+            return jsonify({
+                "success": False,
+                "error": "Invalid admin credentials."
+            }), 401
+
+        session["admin_id"] = admin["id"]
+        session["admin_email"] = admin["email"]
+        session["admin_role"] = admin["role"]
+
+        return jsonify({
+            "success": True,
+            "admin": {
+                "id": admin["id"],
+                "email": admin["email"],
+                "role": admin["role"]
+            }
+        }), 200
+
+    except Exception as e:
+        print("Admin login error:", str(e))
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to login as administrator."
+        }), 500
+
+@app.route("/api/admin/logout", methods=["POST"])
+def admin_logout():
+    session.clear()
+
+    return jsonify({
+        "success": True
+    }), 200
+
+@app.route("/api/admin/dashboard", methods=["GET"])
+def admin_dashboard():
+    try:
+        if not session.get("admin_id"):
+            return jsonify({
+                "success": False,
+                "error": "Admin authentication required."
+            }), 401
+
+        date_range = request.args.get("range", "30")
+
+        users_query = """
+        query AdminUsers {
+            users(
+                order_by: {created_at: desc}
+            ) {
+                id
+                full_name
+                email
+                created_at
+            }
+        }
+        """
+
+        users_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": users_query
+            }
+        )
+
+        users_result = users_response.json()
+
+        if "errors" in users_result:
+            print(
+                "Admin users query error:",
+                users_result["errors"]
+            )
+
+            return jsonify({
+                "success": False,
+                "error": users_result["errors"][0]["message"]
+            }), 500
+
+        all_users = (
+            users_result["data"].get("users") or []
+        )
+
+        interviews_query = """
+        query AdminInterviews {
+            interviews(
+                order_by: {created_at: desc}
+            ) {
+                id
+                user_id
+                interview_type
+                interview_mode
+                duration_minutes
+                questions_asked
+                overall_score
+                rating
+                started_at
+                completed_at
+                created_at
+                status
+            }
+        }
+        """
+
+        interviews_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": interviews_query
+            }
+        )
+
+        interviews_result = interviews_response.json()
+
+        if "errors" in interviews_result:
+            print(
+                "Admin interviews query error:",
+                interviews_result["errors"]
+            )
+
+            return jsonify({
+                "success": False,
+                "error": interviews_result["errors"][0]["message"]
+            }), 500
+
+        all_interviews = (
+            interviews_result["data"].get("interviews") or []
+        )
+
+        from datetime import datetime, timezone, timedelta
+
+        now = datetime.now(timezone.utc)
+
+        if date_range == "7":
+            cutoff = now - timedelta(days=7)
+        elif date_range == "30":
+            cutoff = now - timedelta(days=30)
+        elif date_range == "90":
+            cutoff = now - timedelta(days=90)
+        else:
+            cutoff = None
+
+        def parse_datetime(value):
+            if not value:
+                return None
+
+            try:
+                return datetime.fromisoformat(
+                    value.replace("Z", "+00:00")
+                )
+            except Exception:
+                return None
+
+        if cutoff:
+            filtered_interviews = []
+
+            for interview in all_interviews:
+                created_at = parse_datetime(
+                    interview.get("created_at")
+                )
+
+                if created_at and created_at >= cutoff:
+                    filtered_interviews.append(interview)
+        else:
+            filtered_interviews = all_interviews
+
+        user_stats = {}
+
+        for user in all_users:
+            user_stats[user["id"]] = {
+                "id": user["id"],
+                "full_name": user.get("full_name") or "User",
+                "email": user.get("email") or "",
+                "created_at": user.get("created_at"),
+                "total_interviews": 0,
+                "completed_interviews": 0,
+                "average_score": 0,
+                "last_active": user.get("created_at")
+            }
+
+        score_totals = {}
+
+        for interview in filtered_interviews:
+            user_id = interview.get("user_id")
+
+            if user_id not in user_stats:
+                continue
+
+            user_stats[user_id]["total_interviews"] += 1
+
+            if interview.get("status") == "completed":
+                user_stats[user_id]["completed_interviews"] += 1
+
+                score = interview.get("overall_score")
+
+                if score is not None:
+                    try:
+                        numeric_score = float(score)
+
+                        if user_id not in score_totals:
+                            score_totals[user_id] = []
+
+                        score_totals[user_id].append(
+                            numeric_score
+                        )
+                    except (TypeError, ValueError):
+                        pass
+
+            activity_date = (
+                interview.get("completed_at")
+                or interview.get("started_at")
+                or interview.get("created_at")
+            )
+
+            activity_datetime = parse_datetime(
+                activity_date
+            )
+
+            current_last_active = parse_datetime(
+                user_stats[user_id]["last_active"]
+            )
+
+            if activity_datetime:
+                if (
+                    not current_last_active
+                    or activity_datetime > current_last_active
+                ):
+                    user_stats[user_id]["last_active"] = activity_date
+
+        for user_id, scores in score_totals.items():
+            if scores:
+                user_stats[user_id]["average_score"] = round(
+                    sum(scores) / len(scores)
+                )
+
+        users = list(user_stats.values())
+
+        if cutoff:
+            users = [
+                user for user in users
+                if (
+                    parse_datetime(user["created_at"])
+                    and parse_datetime(user["created_at"]) >= cutoff
+                )
+                or user["total_interviews"] > 0
+            ]
+
+        completed_interviews = [
+            interview
+            for interview in filtered_interviews
+            if interview.get("status") == "completed"
+        ]
+
+        scores = []
+
+        for interview in completed_interviews:
+            score = interview.get("overall_score")
+
+            if score is not None:
+                try:
+                    scores.append(float(score))
+                except (TypeError, ValueError):
+                    pass
+
+        average_score = round(
+            sum(scores) / len(scores)
+        ) if scores else 0
+
+        total_users = len(users)
+        total_interviews = len(filtered_interviews)
+        completed_count = len(completed_interviews)
+
+        users.sort(
+            key=lambda user: parse_datetime(
+                user.get("created_at")
+            ) or datetime.min.replace(tzinfo=timezone.utc),
+            reverse=True
+        )
+
+        return jsonify({
+            "success": True,
+            "total_users": total_users,
+            "total_interviews": total_interviews,
+            "completed_interviews": completed_count,
+            "average_score": average_score,
+            "user_change": "—",
+            "interview_change": "—",
+            "completed_change": "—",
+            "score_change": "—",
+            "users": users
+        }), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+
+        print(
+            "Admin dashboard error:",
+            str(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to load admin dashboard."
+        }), 500
+    
 @app.route("/api/dashboard", methods=["POST"])
 def dashboard_data():
     try:
@@ -2745,6 +3120,66 @@ Rules:
                 "Unable to complete the voice interview.",
             "details": str(error)
         }), 500 
+
+@app.route("/api/progress", methods=["GET"])
+def progress_data():
+    try:
+        user_id = request.args.get("user_id")
+
+        if not user_id:
+            return jsonify({"error": "User ID is required."}), 400
+
+        query = """
+        query ProgressData($userId: uuid!) {
+            interviews(
+                where: {
+                    user_id: {_eq: $userId},
+                    status: {_eq: "completed"},
+                    completed_at: {_is_null: false}
+                },
+                order_by: {completed_at: asc}
+            ) {
+                id
+                interview_type
+                overall_score
+                rating
+                completed_at
+                started_at
+                duration_minutes
+                questions_asked
+            }
+        }
+        """
+
+        response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": query,
+                "variables": {
+                    "userId": user_id
+                }
+            }
+        )
+
+        result = response.json()
+
+        if "errors" in result:
+            print("Hasura progress error:", result["errors"])
+            return jsonify({
+                "error": result["errors"][0]["message"]
+            }), 500
+
+        return jsonify({
+            "success": True,
+            "interviews": result["data"].get("interviews") or []
+        }), 200
+
+    except Exception as e:
+        print("Progress API error:", str(e))
+        return jsonify({
+            "error": str(e)
+        }), 500
     
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
