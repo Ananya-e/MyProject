@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded",()=>{
 const userId=localStorage.getItem("user_id");
+const API_BASE="http://127.0.0.1:5000";
+const detailsModalTitle=document.getElementById("detailsModalTitle");
+const detailsContent=document.getElementById("detailsContent");
 
 if(!userId){
 window.location.href="login.html";
@@ -14,7 +17,6 @@ const interviewList=document.getElementById("interviewList");
 const emptyState=document.getElementById("emptyState");
 const allCount=document.getElementById("allCount");
 const completedCount=document.getElementById("completedCount");
-const inProgressCount=document.getElementById("inProgressCount");
 const notCompletedCount=document.getElementById("notCompletedCount");
 const detailsOverlay=document.getElementById("detailsOverlay");
 const detailsClose=document.getElementById("detailsClose");
@@ -95,16 +97,6 @@ filter:"completed"
 };
 }
 
-if(
-status==="in_progress"||
-status==="in-progress"
-){
-return{
-label:"In Progress",
-className:"in-progress",
-filter:"in_progress"
-};
-}
 
 return{
 label:"Not Completed",
@@ -169,17 +161,12 @@ const completed=interviews.filter(
 interview=>getStatus(interview).filter==="completed"
 ).length;
 
-const inProgress=interviews.filter(
-interview=>getStatus(interview).filter==="in_progress"
-).length;
-
 const notCompleted=interviews.filter(
 interview=>getStatus(interview).filter==="not_completed"
 ).length;
 
 allCount.textContent=`(${interviews.length})`;
 completedCount.textContent=`(${completed})`;
-inProgressCount.textContent=`(${inProgress})`;
 notCompletedCount.textContent=`(${notCompleted})`;
 }
 
@@ -320,64 +307,123 @@ renderInterview(interview)
 });
 }
 
-function openDetails(interview){
-const type=getInterviewType(interview);
-const typeLabel=getTypeLabel(type);
-const typeClass=getTypeClass(type);
-const icon=getTypeIcon(type);
-const status=getStatus(interview);
-const score=getScore(interview);
-const date=formatDate(
-interview.completed_at||
-interview.started_at
-);
+async function openDetails(interview) {
+    if (!interview || !interview.id) {
+        return;
+    }
 
-const detailsIcon=document.getElementById("detailsIcon");
-const detailsTitle=document.getElementById("detailsTitle");
-const detailsRole=document.getElementById("detailsRole");
-const detailsDate=document.getElementById("detailsDate");
-const detailsDuration=document.getElementById("detailsDuration");
-const detailsQuestions=document.getElementById("detailsQuestions");
-const detailsScore=document.getElementById("detailsScore");
-const detailsRating=document.getElementById("detailsRating");
-const detailsStatus=document.getElementById("detailsStatus");
+    try {
+        const response = await fetch(
+            `${API_BASE}/api/interviews/${interview.id}?user_id=${encodeURIComponent(userId)}`
+        );
 
-detailsIcon.className=`details-icon ${typeClass}`;
-detailsIcon.innerHTML=`<i class="fa-solid ${icon}"></i>`;
+        const data = await response.json();
 
-detailsTitle.textContent=`${typeLabel} Interview`;
-detailsRole.textContent=
-interview.target_role||
-interview.role||
-"Interview";
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Unable to load interview details.");
+        }
 
-detailsDate.textContent=
-date.date==="—"
-?"—"
-:`${date.date} • ${date.time}`;
+        const details = data.interview;
+        const questions = data.questions || [];
+        const competencyScores = data.competency_scores || {};
 
-detailsDuration.textContent=
-formatDuration(interview.duration_minutes);
+        const isCancelled = details.status === "cancelled";
+        const isVoice = details.interview_mode === "voice";
 
-detailsQuestions.textContent=
-Number.isFinite(Number(interview.questions_asked))
-?`${Number(interview.questions_asked)} questions`
-:"—";
+        if (isCancelled) {
+            detailsModalTitle.textContent = "Interview Not Completed";
 
-detailsScore.textContent=
-score===null
-?"—"
-:`${score}%`;
+            detailsContent.innerHTML = `
+                <div class="not-completed-details">
+                    <div class="not-completed-icon">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </div>
+                    <h3>Interview Not Completed</h3>
+                    <p>This interview was cancelled before it was completed.</p>
+                </div>
+            `;
 
-detailsRating.textContent=
-Number.isFinite(Number(interview.rating))
-?`${interview.rating}/5`
-:"—";
+            detailsOverlay.classList.add("active");
+            document.body.style.overflow="hidden";
+            return;
+        }
 
-detailsStatus.textContent=status.label;
+        detailsModalTitle.textContent = "Interview Result";
 
-detailsOverlay.classList.add("active");
-document.body.style.overflow="hidden";
+        const summary = details.summary || "No performance summary is available.";
+
+        const competencyItems = [
+            ["Communication", competencyScores.communication],
+            ["Confidence", competencyScores.confidence],
+            ["Technical Skills", competencyScores.technical_skills],
+            ["Answer Structure", competencyScores.answer_structure]
+        ];
+
+        const competencyHTML = competencyItems.map(([label, value]) => `
+            <div class="result-competency">
+                <div class="result-competency-header">
+                    <span>${label}</span>
+                    <strong>${Math.round(Number(value) || 0)}%</strong>
+                </div>
+                <div class="result-progress">
+                    <div style="width:${Math.max(0, Math.min(100, Number(value) || 0))}%"></div>
+                </div>
+            </div>
+        `).join("");
+
+        const questionsHTML = !isVoice && questions.length
+            ? `
+                <div class="result-section">
+                    <h3>Question-wise Performance</h3>
+                    <div class="result-questions">
+                        ${questions.map((question, index) => `
+                            <div class="result-question">
+                                <div class="result-question-top">
+                                    <span>Question ${index + 1}</span>
+                                    <strong>${Number(question.score) || 0}/10</strong>
+                                </div>
+                                <p class="result-question-text">${question.question || ""}</p>
+                                <p class="result-question-feedback">${question.feedback || "No feedback available."}</p>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+            `
+            : "";
+
+        const feedbackHTML = isVoice && details.feedback
+            ? `
+                <div class="result-section">
+                    <h3>AI Feedback</h3>
+                    <p class="result-summary-text">${details.feedback}</p>
+                </div>
+            `
+            : "";
+
+        detailsContent.innerHTML = `
+            <div class="result-section">
+                <h3>Performance Summary</h3>
+                <p class="result-summary-text">${summary}</p>
+            </div>
+
+            <div class="result-section">
+                <h3>Competency Scores</h3>
+                <div class="result-competencies">
+                    ${competencyHTML}
+                </div>
+            </div>
+
+            ${feedbackHTML}
+            ${questionsHTML}
+        `;
+
+        detailsOverlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+
+    } catch (error) {
+        console.error("Interview details error:", error);
+        showToast(error.message || "Unable to load interview details.");
+    }
 }
 
 function closeDetails(){
@@ -396,7 +442,7 @@ return String(value)
 
 async function loadInterviews(){
 try{
-const response=await fetch("http://127.0.0.1:5000/api/dashboard",{
+const response=await fetch("http://127.0.0.1:5000/api/interviews",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -420,8 +466,8 @@ interviews=Array.isArray(data.interviews)
 :[];
 
 interviews.sort((a,b)=>{
-return new Date(b.completed_at||b.started_at||0)-
-new Date(a.completed_at||a.started_at||0);
+return new Date(b.completed_at||b.started_at||b.created_at||0)-
+new Date(a.completed_at||a.started_at||a.created_at||0);
 });
 
 updateCounts();

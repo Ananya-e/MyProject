@@ -115,10 +115,6 @@ All Interviews <span id="allCount">(0)</span>
 Completed <span id="completedCount">(0)</span>
 </button>
 
-<button class="history-tab" data-filter="in_progress">
-In Progress <span id="inProgressCount">(0)</span>
-</button>
-
 <button class="history-tab" data-filter="not_completed">
 Not Completed <span id="notCompletedCount">(0)</span>
 </button>
@@ -154,57 +150,18 @@ Not Completed <span id="notCompletedCount">(0)</span>
 </div>
 
 <div class="details-overlay" id="detailsOverlay">
-<div class="details-modal">
+<div class="details-modal-content">
+    <div class="details-modal-header">
+        <div>
+            <span class="details-modal-label">INTERVIEW RESULT</span>
+            <h2 id="detailsModalTitle">Interview Result</h2>
+        </div>
+        <button type="button" class="details-close" id="detailsClose">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
 
-<button class="details-close" id="detailsClose" aria-label="Close details">
-<i class="fa-solid fa-xmark"></i>
-</button>
-
-<div class="details-header">
-<div class="details-icon" id="detailsIcon">
-<i class="fa-solid fa-code"></i>
-</div>
-<div>
-<span class="details-label">INTERVIEW DETAILS</span>
-<h2 id="detailsTitle">Technical Interview</h2>
-<p id="detailsRole">Software Developer</p>
-</div>
-</div>
-
-<div class="details-grid">
-
-<div class="detail-item">
-<span>Date</span>
-<strong id="detailsDate">—</strong>
-</div>
-
-<div class="detail-item">
-<span>Duration</span>
-<strong id="detailsDuration">—</strong>
-</div>
-
-<div class="detail-item">
-<span>Questions</span>
-<strong id="detailsQuestions">—</strong>
-</div>
-
-<div class="detail-item">
-<span>Score</span>
-<strong id="detailsScore">—</strong>
-</div>
-
-<div class="detail-item">
-<span>Rating</span>
-<strong id="detailsRating">—</strong>
-</div>
-
-<div class="detail-item">
-<span>Status</span>
-<strong id="detailsStatus">Completed</strong>
-</div>
-
-</div>
-
+    <div id="detailsContent" class="details-content"></div>
 </div>
 </div>
 

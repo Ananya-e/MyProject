@@ -444,3 +444,6 @@ background:#000;
 .demo-video.active{
 display:block;
 }
+.brand{
+cursor:pointer;
+}

@@ -34,3 +34,30 @@ demoVideo.classList.remove("active");
 demoCover.style.display="block";
 });
 }
+const adminTrigger=document.getElementById("adminTrigger");
+
+let adminPressTimer=null;
+
+adminTrigger?.addEventListener("mousedown",()=>{
+adminPressTimer=setTimeout(()=>{
+window.location.href="admin.html";
+},3000);
+});
+
+adminTrigger?.addEventListener("mouseup",()=>{
+clearTimeout(adminPressTimer);
+});
+
+adminTrigger?.addEventListener("mouseleave",()=>{
+clearTimeout(adminPressTimer);
+});
+
+adminTrigger?.addEventListener("touchstart",()=>{
+adminPressTimer=setTimeout(()=>{
+window.location.href="admin.html";
+},3000);
+},{passive:true});
+
+adminTrigger?.addEventListener("touchend",()=>{
+clearTimeout(adminPressTimer);
+});

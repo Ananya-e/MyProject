@@ -4,6 +4,8 @@ const API_BASE="http://127.0.0.1:5000";
 const loginOverlay=document.getElementById("loginOverlay");
 const loginForm=document.getElementById("adminLoginForm");
 const loginSubmit=document.getElementById("loginSubmit");
+const loginClose=document.getElementById("loginClose");
+
 const passwordToggle=document.getElementById("passwordToggle");
 const adminPassword=document.getElementById("adminPassword");
 const logoutBtn=document.getElementById("logoutBtn");
@@ -24,7 +26,9 @@ function hideLogin(){
 loginOverlay.classList.remove("active");
 document.body.style.overflow="";
 }
-
+loginClose.addEventListener("click",()=>{
+window.location.href="index.html";
+});
 function showMessage(message,type="error"){
 if(typeof showToast==="function"){
 showToast(message,type);
@@ -372,7 +376,7 @@ credentials:"include"
 console.error("Admin logout error:",error);
 }
 
-showLogin();
+window.location.href="index.html";
 });
 
 userSearch.addEventListener("input",renderUsers);

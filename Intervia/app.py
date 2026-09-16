@@ -27,6 +27,9 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = False
 sock = Sock(app)
 CORS(
     app,
@@ -782,27 +785,93 @@ def login():
 
         if "errors" in result:
             return (
-                jsonify({"success": False, "message": result["errors"][0]["message"]}),
+                jsonify({
+                    "success": False,
+                    "message": result["errors"][0]["message"]
+                }),
                 400,
             )
 
         users = result["data"]["users"]
 
         if not users:
-            return jsonify({"success": False, "message": "Email not found."})
+            return jsonify({
+                "success": False,
+                "message": "Email not found."
+            })
 
         user = users[0]
 
-        if not check_password_hash(user["password_hash"], password):
-            return jsonify({"success": False, "message": "Incorrect password."})
+        if not check_password_hash(
+            user["password_hash"],
+            password
+        ):
+            return jsonify({
+                "success": False,
+                "message": "Incorrect password."
+            })
+
+        last_active_at = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        activity_mutation = """
+        mutation UpdateUserActivity(
+            $id: uuid!,
+            $lastActiveAt: timestamptz!
+        ) {
+            update_users_by_pk(
+                pk_columns: {id: $id},
+                _set: {
+                    last_active_at: $lastActiveAt
+                }
+            ) {
+                id
+                last_active_at
+            }
+        }
+        """
+
+        activity_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": activity_mutation,
+                "variables": {
+                    "id": user["id"],
+                    "lastActiveAt": last_active_at
+                }
+            }
+        )
+
+        activity_result = activity_response.json()
+
+        if "errors" in activity_result:
+            print(
+                "User activity update error:",
+                activity_result["errors"]
+            )
 
         del user["password_hash"]
 
-        return jsonify({"success": True, "user": user})
+        user["last_active_at"] = last_active_at
+
+        return jsonify({
+            "success": True,
+            "user": user
+        })
 
     except Exception as e:
-        return jsonify({"success": False, "message": "Server error."}), 500
+        print(
+            "Login error:",
+            str(e)
+        )
 
+        return jsonify({
+            "success": False,
+            "message": "Server error."
+        }), 500
+    
 @app.route("/api/admin/login", methods=["POST"])
 def admin_login():
     try:
@@ -931,7 +1000,8 @@ def admin_dashboard():
             headers=HEADERS,
             json={
                 "query": users_query
-            }
+            },
+            timeout=15
         )
 
         users_result = users_response.json()
@@ -948,7 +1018,7 @@ def admin_dashboard():
             }), 500
 
         all_users = (
-            users_result["data"].get("users") or []
+            users_result.get("data", {}).get("users") or []
         )
 
         interviews_query = """
@@ -959,7 +1029,6 @@ def admin_dashboard():
                 id
                 user_id
                 interview_type
-                interview_mode
                 duration_minutes
                 questions_asked
                 overall_score
@@ -977,7 +1046,8 @@ def admin_dashboard():
             headers=HEADERS,
             json={
                 "query": interviews_query
-            }
+            },
+            timeout=15
         )
 
         interviews_result = interviews_response.json()
@@ -994,18 +1064,19 @@ def admin_dashboard():
             }), 500
 
         all_interviews = (
-            interviews_result["data"].get("interviews") or []
+            interviews_result.get("data", {}).get("interviews") or []
         )
-
-        from datetime import datetime, timezone, timedelta
 
         now = datetime.now(timezone.utc)
 
         if date_range == "7":
+            from datetime import timedelta
             cutoff = now - timedelta(days=7)
         elif date_range == "30":
+            from datetime import timedelta
             cutoff = now - timedelta(days=30)
         elif date_range == "90":
+            from datetime import timedelta
             cutoff = now - timedelta(days=90)
         else:
             cutoff = None
@@ -1073,6 +1144,7 @@ def admin_dashboard():
                         score_totals[user_id].append(
                             numeric_score
                         )
+
                     except (TypeError, ValueError):
                         pass
 
@@ -1107,12 +1179,15 @@ def admin_dashboard():
 
         if cutoff:
             users = [
-                user for user in users
+                user
+                for user in users
                 if (
-                    parse_datetime(user["created_at"])
-                    and parse_datetime(user["created_at"]) >= cutoff
+                    (
+                        parse_datetime(user.get("created_at"))
+                        and parse_datetime(user.get("created_at")) >= cutoff
+                    )
+                    or user["total_interviews"] > 0
                 )
-                or user["total_interviews"] > 0
             ]
 
         completed_interviews = [
@@ -1132,9 +1207,11 @@ def admin_dashboard():
                 except (TypeError, ValueError):
                     pass
 
-        average_score = round(
-            sum(scores) / len(scores)
-        ) if scores else 0
+        average_score = (
+            round(sum(scores) / len(scores))
+            if scores
+            else 0
+        )
 
         total_users = len(users)
         total_interviews = len(filtered_interviews)
@@ -1143,7 +1220,9 @@ def admin_dashboard():
         users.sort(
             key=lambda user: parse_datetime(
                 user.get("created_at")
-            ) or datetime.min.replace(tzinfo=timezone.utc),
+            ) or datetime.min.replace(
+                tzinfo=timezone.utc
+            ),
             reverse=True
         )
 
@@ -1153,15 +1232,23 @@ def admin_dashboard():
             "total_interviews": total_interviews,
             "completed_interviews": completed_count,
             "average_score": average_score,
-            "user_change": "—",
-            "interview_change": "—",
-            "completed_change": "—",
-            "score_change": "—",
             "users": users
         }), 200
 
+    except requests.exceptions.RequestException as e:
+        print(
+            "Admin dashboard Hasura connection error:",
+            str(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Could not connect to the database."
+        }), 503
+
     except Exception as e:
         import traceback
+
         traceback.print_exc()
 
         print(
@@ -1173,7 +1260,6 @@ def admin_dashboard():
             "success": False,
             "error": "Unable to load admin dashboard."
         }), 500
-    
 @app.route("/api/dashboard", methods=["POST"])
 def dashboard_data():
     try:
@@ -1329,6 +1415,323 @@ def dashboard_data():
             "error": str(e)
         }), 500
 
+@app.route("/api/interviews", methods=["POST"])
+def interviews_data():
+    try:
+        data = request.get_json() or {}
+        user_id = data.get("user_id")
+
+        if not user_id:
+            return jsonify({
+                "error": "User ID is required."
+            }), 400
+
+        query = """
+        query InterviewHistory($userId: uuid!) {
+            interviews(
+                where: {
+                    user_id: {_eq: $userId},
+                    status: {_in: ["completed", "cancelled"]}
+                },
+                order_by: {created_at: desc}
+            ) {
+                id
+                interview_type
+                interview_mode
+                duration_minutes
+                questions_asked
+                overall_score
+                rating
+                started_at
+                completed_at
+                created_at
+                status
+            }
+        }
+        """
+
+        response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": query,
+                "variables": {
+                    "userId": user_id
+                }
+            },
+            timeout=15
+        )
+
+        result = response.json()
+
+        if "errors" in result:
+            print(
+                "Hasura interview history error:",
+                result["errors"]
+            )
+
+            return jsonify({
+                "error": result["errors"][0]["message"]
+            }), 500
+
+        interviews = (
+            result.get("data", {})
+            .get("interviews") or []
+        )
+
+        return jsonify({
+            "success": True,
+            "interviews": interviews
+        }), 200
+
+    except requests.exceptions.RequestException as e:
+        print(
+            "Interview history database error:",
+            str(e)
+        )
+
+        return jsonify({
+            "error": "Could not connect to the database."
+        }), 503
+
+    except Exception as e:
+        print(
+            "Interview history API error:",
+            str(e)
+        )
+
+        return jsonify({
+            "error": "Unable to load interview history."
+        }), 500
+
+@app.route("/api/interviews/<interview_id>", methods=["GET"])
+def interview_details(interview_id):
+    try:
+        user_id = request.args.get("user_id")
+
+        if not user_id:
+            return jsonify({
+                "error": "User ID is required."
+            }), 400
+
+        interview_query = """
+        query GetInterviewDetails($id: uuid!) {
+            interviews_by_pk(id: $id) {
+                id
+                user_id
+                interview_type
+                interview_mode
+                duration_minutes
+                questions_asked
+                overall_score
+                rating
+                started_at
+                completed_at
+                created_at
+                status
+                summary
+                feedback
+            }
+        }
+        """
+
+        interview_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": interview_query,
+                "variables": {
+                    "id": interview_id
+                }
+            },
+            timeout=15
+        )
+
+        interview_result = interview_response.json()
+
+        if "errors" in interview_result:
+            print(
+                "Interview details lookup error:",
+                interview_result["errors"]
+            )
+
+            return jsonify({
+                "error": interview_result["errors"][0]["message"]
+            }), 500
+
+        interview = (
+            interview_result
+            .get("data", {})
+            .get("interviews_by_pk")
+        )
+
+        if not interview:
+            return jsonify({
+                "error": "Interview not found."
+            }), 404
+
+        if str(interview.get("user_id")) != str(user_id):
+            return jsonify({
+                "error": "You are not authorized to view this interview."
+            }), 403
+
+        if interview.get("status") not in ["completed", "cancelled"]:
+            return jsonify({
+                "error": "Interview result is not available."
+            }), 400
+
+        questions_query = """
+        query GetInterviewQuestions($interviewId: uuid!) {
+            interview_questions(
+                where: {
+                    interview_id: {_eq: $interviewId}
+                },
+                order_by: {
+                    question_number: asc
+                }
+            ) {
+                id
+                question_number
+                question
+                answer
+                score
+                feedback
+            }
+        }
+        """
+
+        questions_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": questions_query,
+                "variables": {
+                    "interviewId": interview_id
+                }
+            },
+            timeout=15
+        )
+
+        questions_result = questions_response.json()
+
+        if "errors" in questions_result:
+            print(
+                "Interview questions lookup error:",
+                questions_result["errors"]
+            )
+
+            return jsonify({
+                "error": questions_result["errors"][0]["message"]
+            }), 500
+
+        questions = (
+            questions_result
+            .get("data", {})
+            .get("interview_questions") or []
+        )
+
+        scores_query = """
+        query GetInterviewScores($interviewId: uuid!) {
+            interview_scores(
+                where: {
+                    interview_id: {_eq: $interviewId}
+                },
+                limit: 1
+            ) {
+                communication
+                confidence
+                technical_skills
+                answer_structure
+            }
+        }
+        """
+
+        scores_response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": scores_query,
+                "variables": {
+                    "interviewId": interview_id
+                }
+            },
+            timeout=15
+        )
+
+        scores_result = scores_response.json()
+
+        if "errors" in scores_result:
+            print(
+                "Interview scores lookup error:",
+                scores_result["errors"]
+            )
+
+            return jsonify({
+                "error": scores_result["errors"][0]["message"]
+            }), 500
+
+        scores = (
+            scores_result
+            .get("data", {})
+            .get("interview_scores") or []
+        )
+
+        competency_scores = {
+            "communication": 0,
+            "confidence": 0,
+            "technical_skills": 0,
+            "answer_structure": 0
+        }
+
+        if scores:
+            score = scores[0]
+
+            competency_scores = {
+                "communication": float(
+                    score.get("communication") or 0
+                ),
+                "confidence": float(
+                    score.get("confidence") or 0
+                ),
+                "technical_skills": float(
+                    score.get("technical_skills") or 0
+                ),
+                "answer_structure": float(
+                    score.get("answer_structure") or 0
+                )
+            }
+
+        return jsonify({
+            "success": True,
+            "interview": interview,
+            "questions": questions,
+            "competency_scores": competency_scores
+        }), 200
+
+    except requests.exceptions.RequestException as e:
+        print(
+            "Interview details database error:",
+            str(e)
+        )
+
+        return jsonify({
+            "error": "Could not connect to the database."
+        }), 503
+
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+
+        print(
+            "Interview details API error:",
+            str(e)
+        )
+
+        return jsonify({
+            "error": "Unable to load interview details."
+        }), 500
+    
 INTERVIEW_QUESTIONS_SCHEMA = {
     "type": "object",
     "properties": {
@@ -2394,6 +2797,7 @@ The summary should briefly explain the candidate's overall performance and the m
             $completedAt: timestamptz!,
             $durationMinutes: Int!,
             $status: String!
+            $summary: String!
         ) {
             update_interviews_by_pk(
                 pk_columns: {id: $id},
@@ -2402,7 +2806,9 @@ The summary should briefly explain the candidate's overall performance and the m
                     rating: $rating,
                     completed_at: $completedAt,
                     duration_minutes: $durationMinutes,
-                    status: $status
+                    status: $status,
+                    summary: $summary
+            
                 }
             ) {
                 id
@@ -2411,6 +2817,7 @@ The summary should briefly explain the candidate's overall performance and the m
                 completed_at
                 duration_minutes
                 status
+                summary
             }
         }
         """
@@ -2426,7 +2833,8 @@ The summary should briefly explain the candidate's overall performance and the m
                     "rating": rating,
                     "completedAt": completed_at,
                     "durationMinutes": duration_minutes,
-                    "status": "completed"
+                    "status": "completed",
+                    "summary": summary
                 }
             }
         )
@@ -2969,7 +3377,9 @@ Rules:
             $duration: Int!,
             $overall: numeric!,
             $rating: Int!,
-            $completedAt: timestamptz!
+            $completedAt: timestamptz!,
+            $summary: String!,
+            $feedback: String!
         ) {
             update_interviews_by_pk(
                 pk_columns: {
@@ -2980,7 +3390,10 @@ Rules:
                     duration_minutes: $duration,
                     overall_score: $overall,
                     rating: $rating,
-                    completed_at: $completedAt
+                    completed_at: $completedAt,
+                    summary: $summary,
+
+                    feedback: $feedback
                 }
             ) {
                 id
@@ -2989,6 +3402,8 @@ Rules:
                 overall_score
                 rating
                 completed_at
+                summary
+                feedback
             }
         }
         """
@@ -3003,7 +3418,9 @@ Rules:
                     "duration": duration_minutes,
                     "overall": overall_score,
                     "rating": rating,
-                    "completedAt": completed_at
+                    "completedAt": completed_at,
+                    "summary": evaluation.get("summary", ""),
+                    "feedback": evaluation.get("feedback", "")
                 }
             }
         ).json()
