@@ -871,7 +871,104 @@ def login():
             "success": False,
             "message": "Server error."
         }), 500
-    
+@app.route("/api/user/activity", methods=["POST"])
+def update_user_activity():
+    try:
+        data = request.get_json() or {}
+        user_id = data.get("user_id")
+
+        if not user_id:
+            return jsonify({
+                "success": False,
+                "error": "User ID is required."
+            }), 400
+
+        last_active_at = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        mutation = """
+        mutation UpdateUserActivity(
+            $id: uuid!,
+            $lastActiveAt: timestamptz!
+        ) {
+            update_users_by_pk(
+                pk_columns: {id: $id},
+                _set: {
+                    last_active_at: $lastActiveAt
+                }
+            ) {
+                id
+                last_active_at
+            }
+        }
+        """
+
+        response = requests.post(
+            HASURA_URL,
+            headers=HEADERS,
+            json={
+                "query": mutation,
+                "variables": {
+                    "id": user_id,
+                    "lastActiveAt": last_active_at
+                }
+            },
+            timeout=15
+        )
+
+        result = response.json()
+
+        if "errors" in result:
+            print(
+                "User activity update error:",
+                result["errors"]
+            )
+
+            return jsonify({
+                "success": False,
+                "error": "Could not update user activity."
+            }), 500
+
+        updated_user = (
+            result
+            .get("data", {})
+            .get("update_users_by_pk")
+        )
+
+        if not updated_user:
+            return jsonify({
+                "success": False,
+                "error": "User not found."
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "last_active_at": updated_user["last_active_at"]
+        }), 200
+
+    except requests.exceptions.RequestException as e:
+        print(
+            "User activity database error:",
+            str(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Could not connect to the database."
+        }), 503
+
+    except Exception as e:
+        print(
+            "User activity error:",
+            str(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to update user activity."
+        }), 500
+     
 @app.route("/api/admin/login", methods=["POST"])
 def admin_login():
     try:
@@ -991,6 +1088,7 @@ def admin_dashboard():
                 full_name
                 email
                 created_at
+                last_active_at
             }
         }
         """
@@ -1113,10 +1211,11 @@ def admin_dashboard():
                 "full_name": user.get("full_name") or "User",
                 "email": user.get("email") or "",
                 "created_at": user.get("created_at"),
+                "last_active_at": user.get("last_active_at"),
                 "total_interviews": 0,
                 "completed_interviews": 0,
                 "average_score": 0,
-                "last_active": user.get("created_at")
+                "last_active": user.get("last_active_at")
             }
 
         score_totals = {}
@@ -1147,27 +1246,6 @@ def admin_dashboard():
 
                     except (TypeError, ValueError):
                         pass
-
-            activity_date = (
-                interview.get("completed_at")
-                or interview.get("started_at")
-                or interview.get("created_at")
-            )
-
-            activity_datetime = parse_datetime(
-                activity_date
-            )
-
-            current_last_active = parse_datetime(
-                user_stats[user_id]["last_active"]
-            )
-
-            if activity_datetime:
-                if (
-                    not current_last_active
-                    or activity_datetime > current_last_active
-                ):
-                    user_stats[user_id]["last_active"] = activity_date
 
         for user_id, scores in score_totals.items():
             if scores:
@@ -1260,6 +1338,7 @@ def admin_dashboard():
             "success": False,
             "error": "Unable to load admin dashboard."
         }), 500
+
 @app.route("/api/dashboard", methods=["POST"])
 def dashboard_data():
     try:

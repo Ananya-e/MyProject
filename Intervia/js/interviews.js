@@ -331,21 +331,21 @@ async function openDetails(interview) {
         const isVoice = details.interview_mode === "voice";
 
         if (isCancelled) {
-            detailsModalTitle.textContent = "Interview Not Completed";
+detailsModalTitle.textContent = "Interview Cancelled";
 
-            detailsContent.innerHTML = `
-                <div class="not-completed-details">
-                    <div class="not-completed-icon">
-                        <i class="fa-solid fa-circle-xmark"></i>
-                    </div>
-                    <h3>Interview Not Completed</h3>
-                    <p>This interview was cancelled before it was completed.</p>
-                </div>
-            `;
+detailsContent.innerHTML = `
+    <div class="not-completed-details">
+        <div class="not-completed-icon">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <h3>Interview Cancelled</h3>
+        <p>This interview was cancelled and was not completed.</p>
+    </div>
+`;
 
-            detailsOverlay.classList.add("active");
-            document.body.style.overflow="hidden";
-            return;
+detailsOverlay.classList.add("active");
+document.body.style.overflow="hidden";
+return;
         }
 
         detailsModalTitle.textContent = "Interview Result";

@@ -65,3 +65,40 @@ sessionStorage.removeItem("current_interview");
 window.location.href="index.html";
 });
 });
+const activityUserId=localStorage.getItem("user_id");
+
+async function updateUserActivity(){
+if(!activityUserId){
+return;
+}
+
+try{
+await fetch("http://127.0.0.1:5000/api/user/activity",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:activityUserId
+})
+});
+}catch(error){
+console.error("User activity update error:",error);
+}
+}
+
+if(activityUserId){
+updateUserActivity();
+
+setInterval(()=>{
+if(document.visibilityState==="visible"){
+updateUserActivity();
+}
+},60000);
+
+document.addEventListener("visibilitychange",()=>{
+if(document.visibilityState==="visible"){
+updateUserActivity();
+}
+});
+}

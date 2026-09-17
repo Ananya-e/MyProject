@@ -70,18 +70,36 @@ recent:false
 };
 }
 
-const diff=Math.floor(
-(Date.now()-date.getTime())/86400000
+const diffMinutes=Math.floor(
+(Date.now()-date.getTime())/60000
 );
 
-if(diff<=0){
+if(diffMinutes<5){
 return{
-label:"Active",
+label:"Active now",
 recent:false
 };
 }
 
-if(diff===1){
+if(diffMinutes<60){
+return{
+label:`${diffMinutes} mins ago`,
+recent:true
+};
+}
+
+const diffHours=Math.floor(diffMinutes/60);
+
+if(diffHours<24){
+return{
+label:`${diffHours} hour${diffHours===1?"":"s"} ago`,
+recent:true
+};
+}
+
+const diffDays=Math.floor(diffHours/24);
+
+if(diffDays===1){
 return{
 label:"1 day ago",
 recent:true
@@ -89,7 +107,7 @@ recent:true
 }
 
 return{
-label:`${diff} days ago`,
+label:`${diffDays} days ago`,
 recent:true
 };
 }
@@ -195,11 +213,7 @@ filtered.forEach((user,index)=>{
 const name=user.full_name||"User";
 const initial=name.charAt(0).toUpperCase();
 const score=getAverageScore(user);
-const active=getLastActive(
-user.last_active||
-user.updated_at||
-user.created_at
-);
+const active=getLastActive(user.last_active);
 
 const row=document.createElement("tr");
 
