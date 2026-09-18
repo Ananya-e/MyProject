@@ -15,6 +15,8 @@ const typeCards=document.querySelectorAll(".type-card");
 const questionButtons=document.querySelectorAll(".question-options button");
 const targetRole=document.getElementById("targetRole");
 const experienceLevel=document.getElementById("experienceLevel");
+const customRoleContainer=document.getElementById("customRoleContainer");
+const customRole=document.getElementById("customRole");
 const questionCountText=document.getElementById("questionCountText");
 const timeText=document.getElementById("timeText");
 
@@ -359,7 +361,20 @@ card.dataset.type;
 );
 
 });
-
+targetRole?.addEventListener(
+"change",
+()=>{
+if(targetRole.value==="custom"){
+customRoleContainer?.classList.add("show");
+customRole?.focus();
+}else{
+customRoleContainer?.classList.remove("show");
+if(customRole){
+customRole.value="";
+}
+}
+}
+);
 questionButtons.forEach(button=>{
 
 button.addEventListener(
@@ -467,6 +482,22 @@ showToast(
 return;
 }
 
+const selectedRole=
+targetRole.value==="custom"
+?customRole?.value.trim()
+:targetRole.value;
+
+if(!selectedRole){
+
+showToast(
+"Please enter your target role."
+);
+
+customRole?.focus();
+
+return;
+}
+
 startBtn.disabled=true;
 
 if(voiceStartBtn){
@@ -494,7 +525,7 @@ startBtn.innerHTML=
 
 localStorage.setItem(
 "target_role",
-targetRole.value
+selectedRole
 );
 
 localStorage.setItem(
@@ -506,7 +537,7 @@ try{
 
 const requestBody={
 user_id:userId,
-target_role:targetRole.value,
+target_role:selectedRole,
 experience_level:experienceLevel.value,
 interview_type:selectedType,
 interview_mode:

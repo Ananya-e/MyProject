@@ -13,7 +13,6 @@ import tempfile
 from werkzeug.utils import secure_filename
 from flask import send_file
 import base64
-import json
 import threading
 import websocket
 from flask_sock import Sock
