@@ -7,3 +7,4 @@ google-genai
 flask-sock
 websocket-client
 python-docx 
+gunicorn
