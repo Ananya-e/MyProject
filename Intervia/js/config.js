@@ -1,0 +1,1 @@
+window.API_BASE="https://intervia-backend-z074.onrender.com";
