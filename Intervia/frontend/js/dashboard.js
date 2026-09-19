@@ -1,6 +1,6 @@
 console.log("[Intervia] dashboard.js loaded — resume-state-rebuild-v1");
 
-const API_BASE=window.API_BASE||"http://127.0.0.1:5000";
+const API_BASE=window.API_BASE;
 const userId=localStorage.getItem("user_id");
 
 const Dashboard={

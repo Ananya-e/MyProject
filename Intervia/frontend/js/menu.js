@@ -73,7 +73,7 @@ return;
 }
 
 try{
-await fetch("http://127.0.0.1:5000/api/user/activity",{
+await fetch(`${window.API_BASE}/api/user/activity`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"

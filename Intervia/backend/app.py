@@ -27,8 +27,8 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
 sock = Sock(app)
 CORS(
     app,

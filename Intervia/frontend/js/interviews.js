@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded",()=>{
 const userId=localStorage.getItem("user_id");
-const API_BASE="http://127.0.0.1:5000";
+const API_BASE=window.API_BASE;
 const detailsModalTitle=document.getElementById("detailsModalTitle");
 const detailsContent=document.getElementById("detailsContent");
 
@@ -442,7 +442,7 @@ return String(value)
 
 async function loadInterviews(){
 try{
-const response=await fetch("http://127.0.0.1:5000/api/interviews",{
+const response=await fetch(`${API_BASE}/api/interviews`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"

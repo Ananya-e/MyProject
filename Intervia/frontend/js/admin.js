@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded",()=>{
-const API_BASE="http://127.0.0.1:5000";
 
 const loginOverlay=document.getElementById("loginOverlay");
 const loginForm=document.getElementById("adminLoginForm");

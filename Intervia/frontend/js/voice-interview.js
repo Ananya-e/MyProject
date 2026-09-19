@@ -1,4 +1,4 @@
-const API_BASE=window.API_BASE||"http://127.0.0.1:5000";
+const API_BASE=window.API_BASE;
 
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -463,11 +463,7 @@ window.location.protocol==="https:"
 ?"wss"
 :"ws";
 
-const host=
-window.location.hostname==="localhost"||
-window.location.hostname==="127.0.0.1"
-?"127.0.0.1:5000"
-:window.location.host;
+const host=new URL(API_BASE).host;
 
 const url=
 `${protocol}://${host}/ws/voice-interview/${interviewId}`;
